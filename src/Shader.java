@@ -1,4 +1,5 @@
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL43;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +21,26 @@ public class Shader
 	String readEntireFile(String file) throws IOException
 	{
 		return new String(Files.readAllBytes(Paths.get(file)));
+	}
+	
+	public int getUniformLocation(String uniform)
+	{
+		int rez = GL30.glGetUniformLocation(id, uniform);
+		if(rez == -1)
+		{
+			System.out.println("Invalid uniform name: " + uniform);
+		}
+		return rez;
+	}
+	
+	public int getStorageBLockIndex(String block)
+	{
+		int rez = GL43.glGetProgramResourceIndex(id, GL43.GL_SHADER_STORAGE_BLOCK, block);
+		if(rez == GL43.GL_INVALID_INDEX)
+		{
+			System.out.println("Invalid storage block name: " + block);
+		}
+		return rez;
 	}
 	
 	private int loadShaderComponent(int type, String text)

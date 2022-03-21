@@ -11,6 +11,9 @@ import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GameLayer extends GameManager
 {
@@ -20,21 +23,38 @@ public class GameLayer extends GameManager
 	Shader shader = new Shader();
 	Camera camera = new Camera();
 	int u_viewProjection;
+	int u_pointLightsCount;
+	int u_pointLights;
+	int u_model;
 	int vao;
 	Texture t = new Texture();
+	
+	ArrayList<PointLight> pointLightArray = new ArrayList<PointLight>();
+	LightManager lightManager = new LightManager();
 	
 	public void gameInit()
 	{
 		
+		lightManager.init();
+		
 		try
 		{
 			shader.loadShaderFromFile("resources//vert.vert", "resources//frag.frag");
-			u_viewProjection = GL30.glGetUniformLocation(shader.id, "u_viewProjection");
+			u_viewProjection = shader.getUniformLocation("u_viewProjection");
+			u_pointLightsCount = shader.getUniformLocation("u_pointLightsCount");
+			u_model = shader.getUniformLocation("u_model");
+			
+			//set the storage block binding for lights
+			u_pointLights = shader.getStorageBLockIndex("u_pointLights");
+			GL43.glShaderStorageBlockBinding(shader.id, u_pointLights, StorageBLockBindings.pointLight);
+			
 			t.load("resources//dog.png");
 		}
 		catch(Exception e){
 			System.out.println("shader error" + e);
 		}
+		
+		pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
 		
 		shader.bind();
 		
@@ -169,8 +189,6 @@ public class GameLayer extends GameManager
 		
 	}
 	
-	float rotation = 0.f;
-	
 	float lastMouseX = getMousePosX();
 	float lastMouseY = getMousePosY();
 	
@@ -231,20 +249,23 @@ public class GameLayer extends GameManager
 			
 		}
 		
-		
 		GL30.glBindVertexArray(vao);
 		
 		shader.bind();
+		
+		lightManager.sendDataToGpu(pointLightArray, u_pointLightsCount);
+		
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			
 			FloatBuffer fb = camera.getViewProjectionMatrix().get(stack.mallocFloat(16));
-			//Vector3f rotate = new Vector3f(0.0f, 0.0f, 1.f);
-			//FloatBuffer fb = new Matrix4f().rotate(rotation * (float)Math.PI, rotate).get(stack.mallocFloat(16));
-			
-			rotation += getDeltaTime();
-			
 			GL30.glUniformMatrix4fv(u_viewProjection, false,
 					fb);
+			
+			//this will be model matrix
+			fb = new Matrix4f().identity().get(stack.mallocFloat(16));
+			GL30.glUniformMatrix4fv(u_model, false,
+					fb);
+
 		}
 		
 		GL30.glActiveTexture(GL30.GL_TEXTURE0);
