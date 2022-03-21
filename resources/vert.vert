@@ -13,8 +13,10 @@ out vec3 v_worldSpacePosition;
 
 void main()
 {
-    v_normal = normal;
+    v_normal = mat3(transpose(inverse(mat3(u_model)))) * normal.xyz;  //non uniform scale
+    v_normal = normalize(v_normal);
+
     v_uv = uv;
-    v_worldSpacePosition = pos;//vec3(u_model * vec4(pos, 1));
+    v_worldSpacePosition = vec3(u_model * vec4(pos, 1));
     gl_Position = u_viewProjection * vec4(pos, 1);
 }
