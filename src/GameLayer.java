@@ -20,12 +20,8 @@ public class GameLayer extends GameManager
 	float pos = 0;
 	int vertexBuffer = 0;
 	int indexBuffer = 0;
-	Shader shader = new Shader();
+	MainShader shader = new MainShader();
 	Camera camera = new Camera();
-	int u_viewProjection;
-	int u_pointLightsCount;
-	int u_pointLights;
-	int u_model;
 	int vao;
 	Texture t = new Texture();
 	
@@ -36,22 +32,15 @@ public class GameLayer extends GameManager
 	{
 		
 		lightManager.init();
+		shader.init();
 		
 		try
 		{
-			shader.loadShaderFromFile("resources//vert.vert", "resources//frag.frag");
-			u_viewProjection = shader.getUniformLocation("u_viewProjection");
-			u_pointLightsCount = shader.getUniformLocation("u_pointLightsCount");
-			u_model = shader.getUniformLocation("u_model");
-			
-			//set the storage block binding for lights
-			u_pointLights = shader.getStorageBLockIndex("u_pointLights");
-			GL43.glShaderStorageBlockBinding(shader.id, u_pointLights, StorageBLockBindings.pointLight);
 			
 			t.load("resources//dog.png");
 		}
 		catch(Exception e){
-			System.out.println("shader error" + e);
+			System.out.println("texture loading error" + e);
 		}
 		
 		pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
@@ -253,17 +242,17 @@ public class GameLayer extends GameManager
 		
 		shader.bind();
 		
-		lightManager.sendDataToGpu(pointLightArray, u_pointLightsCount);
+		lightManager.sendDataToGpu(pointLightArray, shader.u_pointLightsCount);
 		
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			
 			FloatBuffer fb = camera.getViewProjectionMatrix().get(stack.mallocFloat(16));
-			GL30.glUniformMatrix4fv(u_viewProjection, false,
+			GL30.glUniformMatrix4fv(shader.u_viewProjection, false,
 					fb);
 			
 			//this will be model matrix
 			fb = new Matrix4f().identity().get(stack.mallocFloat(16));
-			GL30.glUniformMatrix4fv(u_model, false,
+			GL30.glUniformMatrix4fv(shader.u_model, false,
 					fb);
 
 		}

@@ -11,14 +11,14 @@ import java.nio.file.Paths;
 public class Shader
 {
 	
-	int id = 0;
+	public int id = 0;
 	
 	public void bind()
 	{
 		GL30.glUseProgram(id);
 	}
 	
-	String readEntireFile(String file) throws IOException
+	private String readEntireFile(String file) throws IOException
 	{
 		return new String(Files.readAllBytes(Paths.get(file)));
 	}
