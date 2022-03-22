@@ -52,7 +52,10 @@ public class Texture
 		glBindTexture(GL_TEXTURE_2D, result);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 		
+
 		IntBuffer buffer = ByteBuffer.allocateDirect(data.length << 2)
 				.order(ByteOrder.nativeOrder()).asIntBuffer();
 		buffer.put(data).flip();

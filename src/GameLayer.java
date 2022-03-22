@@ -22,22 +22,26 @@ public class GameLayer extends GameManager
 	int indexBuffer = 0;
 	MainShader shader = new MainShader();
 	Camera camera = new Camera();
+	GyzmosRenderer gyzmosRenderer = new GyzmosRenderer();
 	int vao;
 	Texture t = new Texture();
+	Texture lightBulb = new Texture();
 	
 	ArrayList<PointLight> pointLightArray = new ArrayList<PointLight>();
 	LightManager lightManager = new LightManager();
 	
 	public void gameInit()
 	{
+		//GL43.glEnable(GL_CULL_FACE);
 		
 		lightManager.init();
 		shader.init();
+		gyzmosRenderer.init();
 		
 		try
 		{
-			
 			t.load("resources//dog.png");
+			lightBulb.load("resources//light.png");
 		}
 		catch(Exception e){
 			System.out.println("texture loading error" + e);
@@ -263,6 +267,12 @@ public class GameLayer extends GameManager
 		GL30.glDrawElements(GL30.GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		
 		GL30.glBindVertexArray(0);
+		
+		for(var i : pointLightArray)
+		{
+			gyzmosRenderer.render(camera, new Vector3f(i.positionX,i.positionY,i.positionZ), lightBulb,
+					i.colorR, i.colorG, i.colorB);
+		}
 		
 		
 	}
