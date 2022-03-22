@@ -48,6 +48,7 @@ public class GameLayer extends GameManager
 		}
 		
 		pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
+		pointLightArray.add(new PointLight(-4, 4, 1, 0, 0, 1));
 		
 		shader.bind();
 		
@@ -268,12 +269,26 @@ public class GameLayer extends GameManager
 		
 		GL30.glBindVertexArray(0);
 		
+		{
+			PointLight l = pointLightArray.get(0);
+			
+			float c = (float)Math.cos(3.1415926f * 0.5f * getDeltaTime());
+			float s = (float)Math.sin(3.1415926f * 0.5f * getDeltaTime());
+			
+			float newX = l.positionX * c - l.positionZ * s;
+			float newZ = l.positionX * s + l.positionZ * c;
+			
+			l.positionX = newX;
+			l.positionZ = newZ;
+		}
+		
 		for(var i : pointLightArray)
 		{
-			gyzmosRenderer.render(camera, new Vector3f(i.positionX,i.positionY,i.positionZ), lightBulb,
+			gyzmosRenderer.render(i.positionX,i.positionY,i.positionZ, lightBulb,
 					i.colorR, i.colorG, i.colorB);
 		}
 		
+		gyzmosRenderer.flush(camera);
 		
 	}
 	

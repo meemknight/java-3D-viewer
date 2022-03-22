@@ -14,7 +14,11 @@ void main()
     if(t.a <= 0.01)
         discard;
 
-    t.rgb *= u_color.rgb;
+    vec4 alphaGather = textureGather(u_texture, v_uv, 3).rgba;
+    float avgAlpha = alphaGather.r + alphaGather.g + alphaGather.b + alphaGather.a;
+    avgAlpha /= 4.f;
+
+    t.rgb *= u_color.rgb * avgAlpha;
 
     color = t;
 

@@ -19,15 +19,15 @@ public class LightManager
 		float pointLightsRawData[] = new float[pointLights.size() * 8];
 		for(int i=0; i<pointLights.size(); i++)
 		{
-			pointLightsRawData[i + 0] = pointLights.get(i).positionX;
-			pointLightsRawData[i + 1] = pointLights.get(i).positionY;
-			pointLightsRawData[i + 2] = pointLights.get(i).positionZ;
-			pointLightsRawData[i + 3] = 0.f;
+			pointLightsRawData[8 * i + 0] = pointLights.get(i).positionX;
+			pointLightsRawData[8 * i + 1] = pointLights.get(i).positionY;
+			pointLightsRawData[8 * i + 2] = pointLights.get(i).positionZ;
+			pointLightsRawData[8 * i + 3] = 0.f;
 			
-			pointLightsRawData[i + 4] = pointLights.get(i).colorR;
-			pointLightsRawData[i + 5] = pointLights.get(i).colorG;
-			pointLightsRawData[i + 6] = pointLights.get(i).colorB;
-			pointLightsRawData[i + 7] = 0.f;
+			pointLightsRawData[8 * i + 4] = pointLights.get(i).colorR;
+			pointLightsRawData[8 * i + 5] = pointLights.get(i).colorG;
+			pointLightsRawData[8 * i + 6] = pointLights.get(i).colorB;
+			pointLightsRawData[8 * i + 7] = 0.f;
 		}
 		
 		GL43.glBindBuffer(GL43.GL_SHADER_STORAGE_BUFFER, pointLightBlockBuffer);
