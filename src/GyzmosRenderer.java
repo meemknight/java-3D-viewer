@@ -62,9 +62,6 @@ public class GyzmosRenderer
 		
 		GL43.glActiveTexture(GL43.GL_TEXTURE0);
 		
-		Matrix4f projection = camera.getProjectionMatrix();
-		Matrix4f view = camera.getViewMatrix();
-		
 		for(int i=0; i<textureData.size; i++)
 		{
 			
@@ -72,7 +69,8 @@ public class GyzmosRenderer
 			
 			try(MemoryStack stack = MemoryStack.stackPush())
 			{
-				
+				Matrix4f projection = camera.getProjectionMatrix();
+				Matrix4f view = camera.getViewMatrix();
 				Matrix4f model = new Matrix4f().translate
 						(new Vector3f(
 								data.get(i*6 + 0),

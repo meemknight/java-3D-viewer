@@ -13,12 +13,24 @@ struct PointLights
     vec4 color;
 };
 
+struct DirectionalLights
+{
+    vec4 direction;
+    vec4 color;
+};
+
 readonly restrict layout(std140) buffer u_pointLights
 {
     PointLights pointLights[];
 };
-
 uniform int u_pointLightsCount;
+
+readonly restrict layout(std140) buffer u_directionalLights
+{
+    DirectionalLights directionalLights[];
+};
+uniform int u_directionalLightsCount;
+
 float exposure = 1.2;
 
 const float gamma = 2.2;
@@ -80,13 +92,20 @@ vec3 ACESFitted(vec3 color)
     return color;
 }
 
+vec3 phongLightModel(vec3 lightDirection, vec3 normal, vec3 lightColor)
+{
+    vec3 light = max(dot(v_normal, -lightDirection), 0.f) * lightColor;
+    return light;
+}
+
+
 void main()
 {
     color = toLinearSpace(texture2D(u_texture, v_uv).rgba);
 
     vec3 light = vec3(0);
 
-    light += vec3(0.1); //ambient light
+   // light += vec3(0.1); //ambient light
 
     for(int i=0; i< u_pointLightsCount; i++)
     {
@@ -94,8 +113,15 @@ void main()
         vec3 lightColor = pointLights[i].color.rgb;
         vec3 lightDirection = normalize(v_worldSpacePosition - lightPosition);
 
-        light += max(dot(v_normal, -lightDirection), 0.f) * lightColor;
+        light += phongLightModel(lightDirection, v_normal, lightColor);
+    }
 
+    for(int i=0;i <u_directionalLightsCount; i++)
+    {
+        vec3 lightColor = directionalLights[i].color.rgb;
+        vec3 lightDirection = directionalLights[i].direction.xyz;
+
+        light += phongLightModel(lightDirection, v_normal, lightColor);
     }
 
     color.rgb *= light;

@@ -28,6 +28,7 @@ public class GameLayer extends GameManager
 	Texture lightBulb = new Texture();
 	
 	ArrayList<PointLight> pointLightArray = new ArrayList<PointLight>();
+	ArrayList<DirectionalLight> directionalLightArray = new ArrayList<DirectionalLight>();
 	LightManager lightManager = new LightManager();
 	
 	public void gameInit()
@@ -49,6 +50,8 @@ public class GameLayer extends GameManager
 		
 		pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
 		pointLightArray.add(new PointLight(-4, 4, 1, 0, 0, 1));
+		
+		directionalLightArray.add(new DirectionalLight(-1, -1, 0, 0.2f, 0.2f, 0.2f));
 		
 		shader.bind();
 		
@@ -247,7 +250,7 @@ public class GameLayer extends GameManager
 		
 		shader.bind();
 		
-		lightManager.sendDataToGpu(pointLightArray, shader.u_pointLightsCount);
+		lightManager.sendDataToGpu(pointLightArray, directionalLightArray, shader.u_pointLightsCount, shader.u_directionalLightsCount);
 		
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			
@@ -269,9 +272,8 @@ public class GameLayer extends GameManager
 		
 		GL30.glBindVertexArray(0);
 		
+		for(var l : pointLightArray)
 		{
-			PointLight l = pointLightArray.get(0);
-			
 			float c = (float)Math.cos(3.1415926f * 0.5f * getDeltaTime());
 			float s = (float)Math.sin(3.1415926f * 0.5f * getDeltaTime());
 			
