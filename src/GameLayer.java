@@ -23,10 +23,13 @@ public class GameLayer extends GameManager
 	MainShader shader = new MainShader();
 	Camera camera = new Camera();
 	GyzmosRenderer gyzmosRenderer = new GyzmosRenderer();
+	SkyBoxRenderer skyBoxRenderer = new SkyBoxRenderer();
+	
 	int vao;
 	Texture t = new Texture();
 	Texture lightBulb = new Texture();
 	Texture spotLight = new Texture();
+	SkyBox skyBox = new SkyBox();
 	
 	ArrayList<PointLight> pointLightArray = new ArrayList<PointLight>();
 	ArrayList<DirectionalLight> directionalLightArray = new ArrayList<DirectionalLight>();
@@ -35,6 +38,7 @@ public class GameLayer extends GameManager
 	
 	Material metalMaterial = new Material();
 	
+	
 	public void gameInit()
 	{
 		//GL43.glEnable(GL_CULL_FACE);
@@ -42,6 +46,7 @@ public class GameLayer extends GameManager
 		lightManager.init();
 		shader.init();
 		gyzmosRenderer.init();
+		skyBoxRenderer.init();
 		
 		try
 		{
@@ -59,6 +64,16 @@ public class GameLayer extends GameManager
 		catch(Exception e){
 			System.out.println("texture loading error" + e);
 		}
+		
+		String names[] =
+			{	"resources/skyBoxes/ocean/right.jpg",
+					"resources/skyBoxes/ocean/left.jpg",
+					"resources/skyBoxes/ocean/top.jpg",
+					"resources/skyBoxes/ocean/bottom.jpg",
+					"resources/skyBoxes/ocean/front.jpg",
+					"resources/skyBoxes/ocean/back.jpg" };
+		
+		skyBox.texture = TextureLoader.loadSkyBox(names);
 		
 		pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
 		pointLightArray.add(new PointLight(-4, 4, 1, 0, 0, 1));
@@ -324,6 +339,8 @@ public class GameLayer extends GameManager
 		}
 		
 		gyzmosRenderer.flush(camera);
+		
+		skyBoxRenderer.render(camera, skyBox);
 		
 	}
 	
