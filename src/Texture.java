@@ -19,7 +19,7 @@ public class Texture
 	public int id;
 	
 	//https://www.youtube.com/watch?v=SPt-aogu72A&list=PLRIWtICgwaX0u7Rf9zkZhLoLuZVfUksDP&index=6
-	void load(String name)// throws IOException
+	Texture load(String name)// throws IOException
 	{
 		//org.newdawn.slick.opengl.Texture t = TextureLoader.getTexture("PNG", new FileInputStream(name));
 		//id = t.getTextureID();
@@ -66,6 +66,8 @@ public class Texture
 		
 		glBindTexture(GL_TEXTURE_2D, 0);
 		id = result;
+		
+		return  this;
 	}
 
 }

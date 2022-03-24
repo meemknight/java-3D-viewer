@@ -6,6 +6,9 @@ in vec2 v_uv;
 in vec3 v_worldSpacePosition;
 
 layout(binding = 0) uniform sampler2D u_texture;
+layout(binding = 1) uniform sampler2D u_normal;
+
+uniform vec3 u_eye;
 
 struct PointLights
 {
@@ -109,15 +112,46 @@ vec3 ACESFitted(vec3 color)
     return color;
 }
 
-vec3 phongLightModel(vec3 lightDirection, vec3 normal, vec3 lightColor)
+vec3 phongLightModel(vec3 lightDirection, vec3 normal, vec3 lightColor, vec3 viewDir)
 {
-    vec3 light = max(dot(v_normal, -lightDirection), 0.f) * lightColor;
-    return light;
+    float lightIntensity = max(dot(v_normal, -lightDirection), 0.f);
+
+    if(lightIntensity <= 0){return vec3(0);}
+
+    vec3 light = lightIntensity * lightColor;
+
+    //specular
+    vec3 halfwayDir = normalize(-lightDirection + viewDir);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), 64);
+    vec3 specular = lightColor * spec * 2;
+    //return specular;
+    return light += specular;
 }
 
+//https://gamedev.stackexchange.com/questions/22204/from-normal-to-rotation-matrix#:~:text=Therefore%2C%20if%20you%20want%20to,the%20first%20and%20second%20columns.
+mat3x3 NormalToRotation(in vec3 normal)
+{
+    // Find a vector in the plane
+    vec3 tangent0 = cross(normal, vec3(1, 0, 0));
+    if (dot(tangent0, tangent0) < 0.001)
+    tangent0 = cross(normal, vec3(0, 1, 0));
+    tangent0 = normalize(tangent0);
+    // Find another vector in the plane
+    vec3 tangent1 = normalize(cross(normal, tangent0));
+    // Construct a 3x3 matrix by storing three vectors in the columns of the matrix
+
+    return mat3x3(tangent0,tangent1,normal);
+}
 
 void main()
 {
+
+    vec3 sampeledNormal = texture2D(u_normal, v_uv).xyz;
+    sampeledNormal = normalize(2*sampeledNormal - 1.f);
+
+    vec3 normalMappedNormal = normalize(NormalToRotation(v_normal) * sampeledNormal);
+    vec3 viewDir = normalize(u_eye - v_worldSpacePosition);
+
     color = toLinearSpace(texture2D(u_texture, v_uv).rgba);
 
     vec3 light = vec3(0);
@@ -130,7 +164,7 @@ void main()
         vec3 lightColor = pointLights[i].color.rgb;
         vec3 lightDirection = normalize(v_worldSpacePosition - lightPosition);
 
-        light += phongLightModel(lightDirection, v_normal, lightColor);
+        light += phongLightModel(lightDirection, normalMappedNormal, lightColor, viewDir);
     }
 
     for(int i=0;i <u_directionalLightsCount; i++)
@@ -138,7 +172,7 @@ void main()
         vec3 lightColor = directionalLights[i].color.rgb;
         vec3 lightDirection = directionalLights[i].direction.xyz;
 
-        light += phongLightModel(lightDirection, v_normal, lightColor);
+        light += phongLightModel(lightDirection, normalMappedNormal, lightColor, viewDir);
     }
 
     for(int i=0; i< u_spotLightsCount; i++)
@@ -154,7 +188,7 @@ void main()
         //todo add penumbra
         if(desiredAngle < cosAngleCalculated)
         {
-            light += phongLightModel(lightRayDirection, v_normal, lightColor);
+            light += phongLightModel(lightRayDirection, normalMappedNormal, lightColor, viewDir);
         }else
         {
 
@@ -162,10 +196,9 @@ void main()
 
     }
 
-
-
     color.rgb *= light;
 
     color.rgb = ACESFitted(color.rgb * exposure);
     color = toGammaSpace(color);
+
 }

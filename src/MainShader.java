@@ -11,6 +11,7 @@ public class MainShader extends Shader
 	int u_directionalLights;
 	int u_spotLights;
 	int u_model;
+	int u_eye;
 	
 	public void init()
 	{
@@ -22,6 +23,7 @@ public class MainShader extends Shader
 			u_model = super.getUniformLocation("u_model");
 			u_directionalLightsCount = super.getUniformLocation("u_directionalLightsCount");
 			u_spotLightsCount = super.getUniformLocation("u_spotLightsCount");
+			u_eye = super.getUniformLocation("u_eye");
 			
 			//set the storage block binding for lights
 			u_pointLights = super.getStorageBLockIndex("u_pointLights");

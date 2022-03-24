@@ -33,6 +33,8 @@ public class GameLayer extends GameManager
 	ArrayList<SpotLight> spotLightArray = new ArrayList<SpotLight>();
 	LightManager lightManager = new LightManager();
 	
+	Material metalMaterial = new Material();
+	
 	public void gameInit()
 	{
 		//GL43.glEnable(GL_CULL_FACE);
@@ -47,6 +49,9 @@ public class GameLayer extends GameManager
 			lightBulb.load("resources//light.png");
 			spotLight.load("resources//spotLight.png");
 			
+			metalMaterial.albedoTexture = new Texture().load("resources//rusted_iron//albedo.png");
+			metalMaterial.normalTexture = new Texture().load("resources//rusted_iron//normal.png");
+			
 		}
 		catch(Exception e){
 			System.out.println("texture loading error" + e);
@@ -58,7 +63,7 @@ public class GameLayer extends GameManager
 		//directionalLightArray.add(new DirectionalLight(-1, -1, 0, 0.2f, 0.2f, 0.2f));
 		
 		spotLightArray.add(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
-				GameMath.toRadians(5.f)));
+				GameMath.toRadians(15.f)));
 		
 		shader.bind();
 		
@@ -257,6 +262,8 @@ public class GameLayer extends GameManager
 		
 		shader.bind();
 		
+		GL30.glUniform3f(shader.u_eye, camera.position.x, camera.position.y,camera.position.z);
+		
 		lightManager.sendDataToGpu(pointLightArray, directionalLightArray, spotLightArray,
 				shader.u_pointLightsCount, shader.u_directionalLightsCount, shader.u_spotLightsCount);
 		
@@ -274,7 +281,10 @@ public class GameLayer extends GameManager
 		}
 		
 		GL30.glActiveTexture(GL30.GL_TEXTURE0);
-		GL30.glBindTexture(GL_TEXTURE_2D, t.id);
+		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.albedoTexture.id);
+		
+		GL30.glActiveTexture(GL30.GL_TEXTURE1);
+		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.normalTexture.id);
 		
 		GL30.glDrawElements(GL30.GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		
