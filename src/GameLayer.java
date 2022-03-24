@@ -51,14 +51,17 @@ public class GameLayer extends GameManager
 			
 			metalMaterial.albedoTexture = new Texture().load("resources//rusted_iron//albedo.png");
 			metalMaterial.normalTexture = new Texture().load("resources//rusted_iron//normal.png");
+			metalMaterial.aoTexture = new Texture().load("resources//rusted_iron//ao.png");
+			metalMaterial.metallicTexture = new Texture().load("resources//rusted_iron//metallic.png");
+			metalMaterial.roughnessTexture = new Texture().load("resources//rusted_iron//roughness.png");
 			
 		}
 		catch(Exception e){
 			System.out.println("texture loading error" + e);
 		}
 		
-		//pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
-		//pointLightArray.add(new PointLight(-4, 4, 1, 0, 0, 1));
+		pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
+		pointLightArray.add(new PointLight(-4, 4, 1, 0, 0, 1));
 		
 		//directionalLightArray.add(new DirectionalLight(-1, -1, 0, 0.2f, 0.2f, 0.2f));
 		
@@ -282,9 +285,15 @@ public class GameLayer extends GameManager
 		
 		GL30.glActiveTexture(GL30.GL_TEXTURE0);
 		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.albedoTexture.id);
-		
 		GL30.glActiveTexture(GL30.GL_TEXTURE1);
 		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.normalTexture.id);
+		GL30.glActiveTexture(GL30.GL_TEXTURE2);
+		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.aoTexture.id);
+		GL30.glActiveTexture(GL30.GL_TEXTURE3);
+		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.metallicTexture.id);
+		GL30.glActiveTexture(GL30.GL_TEXTURE4);
+		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.roughnessTexture.id);
+		
 		
 		GL30.glDrawElements(GL30.GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		

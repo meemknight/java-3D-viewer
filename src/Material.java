@@ -1,5 +1,4 @@
-
-
+import org.w3c.dom.Text;
 
 public class Material
 {
@@ -21,5 +20,8 @@ public class Material
 	
 	public Texture albedoTexture;
 	public Texture normalTexture;
-
+	public Texture aoTexture;
+	public Texture metallicTexture;
+	public Texture roughnessTexture;
+	
 }
