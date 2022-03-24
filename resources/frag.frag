@@ -19,6 +19,16 @@ struct DirectionalLights
     vec4 color;
 };
 
+struct SpotLights
+{
+    vec4 position;
+
+    vec3 direction;
+    float angleCos;
+
+    vec4 color;
+};
+
 readonly restrict layout(std140) buffer u_pointLights
 {
     PointLights pointLights[];
@@ -30,6 +40,13 @@ readonly restrict layout(std140) buffer u_directionalLights
     DirectionalLights directionalLights[];
 };
 uniform int u_directionalLightsCount;
+
+readonly restrict layout(std430) buffer u_spotLights
+{
+    SpotLights spotLights[];
+};
+uniform int u_spotLightsCount;
+
 
 float exposure = 1.2;
 
@@ -105,7 +122,7 @@ void main()
 
     vec3 light = vec3(0);
 
-   // light += vec3(0.1); //ambient light
+    light += vec3(0.1); //ambient light
 
     for(int i=0; i< u_pointLightsCount; i++)
     {
@@ -123,6 +140,29 @@ void main()
 
         light += phongLightModel(lightDirection, v_normal, lightColor);
     }
+
+    for(int i=0; i< u_spotLightsCount; i++)
+    {
+        vec3 lightPosition = spotLights[i].position.xyz;
+        vec3 lightColor = spotLights[i].color.rgb;
+        vec3 lightRayDirection = normalize(v_worldSpacePosition - lightPosition);
+        vec3 lightOrientation = spotLights[i].direction.xyz;
+
+        float cosAngleCalculated = dot(lightRayDirection, lightOrientation);
+        float desiredAngle = spotLights[i].angleCos;
+
+        //todo add penumbra
+        if(desiredAngle < cosAngleCalculated)
+        {
+            light += phongLightModel(lightRayDirection, v_normal, lightColor);
+        }else
+        {
+
+        }
+
+    }
+
+
 
     color.rgb *= light;
 

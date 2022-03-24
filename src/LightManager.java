@@ -9,18 +9,22 @@ public class LightManager
 	
 	private int pointLightBlockBuffer = 0;
 	private int directionalLightBlockBuffer = 0;
-
+	private int spotLightBlockBuffer = 0;
+	
 	public void init()
 	{
 		pointLightBlockBuffer = GL43.glGenBuffers();
 		directionalLightBlockBuffer = GL43.glGenBuffers();
+		spotLightBlockBuffer = GL43.glGenBuffers();
 		
 	};
 
 	public void sendDataToGpu(List<PointLight> pointLights,
 							  List<DirectionalLight> directionalLights,
+							  List<SpotLight> spotLights,
 							  int u_pointLightsCount,
-							  int u_directionalLightsCount
+							  int u_directionalLightsCount,
+							  int u_spotLightsCount
 							)
 	{
 		float pointLightsRawData[] = new float[pointLights.size() * 8];
@@ -53,6 +57,30 @@ public class LightManager
 			directionalLightsRawData[8 * i + 7] = 0.f; //not used
 		}
 		
+		//todo optimize
+		
+		float spotLightsRawData[] = new float[spotLights.size() * 12];
+		for(int i=0; i<spotLights.size(); i++)
+		{
+			spotLights.get(i).normalizeData();
+			
+			spotLightsRawData[12 * i + 0] = spotLights.get(i).positionX;
+			spotLightsRawData[12 * i + 1] = spotLights.get(i).positionY;
+			spotLightsRawData[12 * i + 2] = spotLights.get(i).positionZ;
+			spotLightsRawData[12 * i + 3] = 0.f; //not used
+			
+			spotLightsRawData[12 * i + 5] = spotLights.get(i).directionX;
+			spotLightsRawData[12 * i + 4] = spotLights.get(i).directionY;
+			spotLightsRawData[12 * i + 6] = spotLights.get(i).directionZ;
+			spotLightsRawData[12 * i + 7] = spotLights.get(i).angleCos;
+			
+			spotLightsRawData[12 * i + 8] = spotLights.get(i).colorR;
+			spotLightsRawData[12 * i + 9] = spotLights.get(i).colorG;
+			spotLightsRawData[12 * i + 10] = spotLights.get(i).colorB;
+			spotLightsRawData[12 * i + 11] = 0.f; //not used
+		}
+		
+		
 		GL43.glBindBuffer(GL43.GL_SHADER_STORAGE_BUFFER, pointLightBlockBuffer);
 		GL43.glBufferData(GL43.GL_SHADER_STORAGE_BUFFER, pointLightsRawData, GL43.GL_STREAM_DRAW);
 		GL43.glBindBufferBase(GL43.GL_SHADER_STORAGE_BUFFER, StorageBLockBindings.pointLight, pointLightBlockBuffer);
@@ -63,7 +91,10 @@ public class LightManager
 		GL43.glBindBufferBase(GL43.GL_SHADER_STORAGE_BUFFER, StorageBLockBindings.directionalLight, directionalLightBlockBuffer);
 		GL43.glUniform1i(u_directionalLightsCount, directionalLights.size());
 		
-		
+		GL43.glBindBuffer(GL43.GL_SHADER_STORAGE_BUFFER, spotLightBlockBuffer);
+		GL43.glBufferData(GL43.GL_SHADER_STORAGE_BUFFER, spotLightsRawData, GL43.GL_STREAM_DRAW);
+		GL43.glBindBufferBase(GL43.GL_SHADER_STORAGE_BUFFER, StorageBLockBindings.spotLight, spotLightBlockBuffer);
+		GL43.glUniform1i(u_spotLightsCount, spotLights.size());
 		
 	}
 	

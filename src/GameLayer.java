@@ -26,9 +26,11 @@ public class GameLayer extends GameManager
 	int vao;
 	Texture t = new Texture();
 	Texture lightBulb = new Texture();
+	Texture spotLight = new Texture();
 	
 	ArrayList<PointLight> pointLightArray = new ArrayList<PointLight>();
 	ArrayList<DirectionalLight> directionalLightArray = new ArrayList<DirectionalLight>();
+	ArrayList<SpotLight> spotLightArray = new ArrayList<SpotLight>();
 	LightManager lightManager = new LightManager();
 	
 	public void gameInit()
@@ -43,15 +45,20 @@ public class GameLayer extends GameManager
 		{
 			t.load("resources//dog.png");
 			lightBulb.load("resources//light.png");
+			spotLight.load("resources//spotLight.png");
+			
 		}
 		catch(Exception e){
 			System.out.println("texture loading error" + e);
 		}
 		
-		pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
-		pointLightArray.add(new PointLight(-4, 4, 1, 0, 0, 1));
+		//pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
+		//pointLightArray.add(new PointLight(-4, 4, 1, 0, 0, 1));
 		
-		directionalLightArray.add(new DirectionalLight(-1, -1, 0, 0.2f, 0.2f, 0.2f));
+		//directionalLightArray.add(new DirectionalLight(-1, -1, 0, 0.2f, 0.2f, 0.2f));
+		
+		spotLightArray.add(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
+				GameMath.toRadians(5.f)));
 		
 		shader.bind();
 		
@@ -250,7 +257,8 @@ public class GameLayer extends GameManager
 		
 		shader.bind();
 		
-		lightManager.sendDataToGpu(pointLightArray, directionalLightArray, shader.u_pointLightsCount, shader.u_directionalLightsCount);
+		lightManager.sendDataToGpu(pointLightArray, directionalLightArray, spotLightArray,
+				shader.u_pointLightsCount, shader.u_directionalLightsCount, shader.u_spotLightsCount);
 		
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			
@@ -287,6 +295,12 @@ public class GameLayer extends GameManager
 		for(var i : pointLightArray)
 		{
 			gyzmosRenderer.render(i.positionX,i.positionY,i.positionZ, lightBulb,
+					i.colorR, i.colorG, i.colorB);
+		}
+		
+		for(var i : spotLightArray)
+		{
+			gyzmosRenderer.render(i.positionX,i.positionY,i.positionZ, spotLight,
 					i.colorR, i.colorG, i.colorB);
 		}
 		
