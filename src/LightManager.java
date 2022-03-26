@@ -80,7 +80,6 @@ public class LightManager
 			spotLightsRawData[12 * i + 11] = 0.f; //not used
 		}
 		
-		
 		GL43.glBindBuffer(GL43.GL_SHADER_STORAGE_BUFFER, pointLightBlockBuffer);
 		GL43.glBufferData(GL43.GL_SHADER_STORAGE_BUFFER, pointLightsRawData, GL43.GL_STREAM_DRAW);
 		GL43.glBindBufferBase(GL43.GL_SHADER_STORAGE_BUFFER, StorageBLockBindings.pointLight, pointLightBlockBuffer);

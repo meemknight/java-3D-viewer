@@ -87,8 +87,6 @@ public class GameLayer extends GameManager
 		
 		vao = GL30.glGenVertexArrays();
 		GL30.glBindVertexArray(vao);
-		
-		float bufferData[] = {0.f, 1.f, -1.f, -1.f, 1.f, -1.f};
 
 		float cubePositionsNormals[] = {
 				-1.0f, +1.0f, +1.0f, // 0
@@ -309,7 +307,6 @@ public class GameLayer extends GameManager
 		GL30.glActiveTexture(GL30.GL_TEXTURE4);
 		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.roughnessTexture.id);
 		
-		
 		GL30.glDrawElements(GL30.GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		
 		GL30.glBindVertexArray(0);
@@ -326,6 +323,7 @@ public class GameLayer extends GameManager
 			l.positionZ = newZ;
 		}
 		
+		
 		for(var i : pointLightArray)
 		{
 			gyzmosRenderer.render(i.positionX,i.positionY,i.positionZ, lightBulb,
@@ -339,6 +337,7 @@ public class GameLayer extends GameManager
 		}
 		
 		gyzmosRenderer.flush(camera);
+		
 		
 		skyBoxRenderer.render(camera, skyBox);
 		

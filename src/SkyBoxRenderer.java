@@ -1,5 +1,6 @@
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL44;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
@@ -52,7 +53,6 @@ public class SkyBoxRenderer
 			1.0f, -1.0f,  1.0f
 	};
 	
-	
 	public int vertexData = 0;
 	public int vao = 0;
 	
@@ -64,9 +64,10 @@ public class SkyBoxRenderer
 		vao = GL30.glGenVertexArrays();
 		GL30.glBindVertexArray(vao);
 		
-		vertexData = GL30.glGenVertexArrays();
+		vertexData = GL30.glGenBuffers();
 		GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vertexData);
-		GL30.glBufferData(GL30.GL_ARRAY_BUFFER, skyboxVertices, GL30.GL_STATIC_DRAW);
+		//GL30.glBufferData(GL30.GL_ARRAY_BUFFER, skyboxVertices, GL30.GL_STATIC_DRAW);
+		GL44.glBufferStorage(GL30.GL_ARRAY_BUFFER, skyboxVertices, 0);
 		
 		GL30.glEnableVertexAttribArray(0);
 		GL30.glVertexAttribPointer(0, 3, GL30.GL_FLOAT, false, 0, 0);
@@ -89,8 +90,12 @@ public class SkyBoxRenderer
 	
 	public void render(Camera camera, SkyBox skyBox)
 	{
-		GL30.glBindVertexArray(vao);
+		
 		shader.bind();
+		
+		GL30.glBindVertexArray(vao);
+		GL30.glDisableVertexAttribArray(1);
+		GL30.glDisableVertexAttribArray(2);
 		
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			

@@ -27,13 +27,13 @@ public class MainShader extends Shader
 			
 			//set the storage block binding for lights
 			u_pointLights = super.getStorageBLockIndex("u_pointLights");
-			GL43.glShaderStorageBlockBinding(super.id, u_pointLights, StorageBLockBindings.pointLight);
+			GL43.glShaderStorageBlockBinding(id, u_pointLights, StorageBLockBindings.pointLight);
 			
 			u_directionalLights = super.getStorageBLockIndex("u_directionalLights");
-			GL43.glShaderStorageBlockBinding(super.id, u_directionalLights, StorageBLockBindings.directionalLight);
+			GL43.glShaderStorageBlockBinding(id, u_directionalLights, StorageBLockBindings.directionalLight);
 			
 			u_spotLights = super.getStorageBLockIndex("u_spotLights");
-			GL43.glShaderStorageBlockBinding(super.id, u_spotLights, StorageBLockBindings.spotLight);
+			GL43.glShaderStorageBlockBinding(id, u_spotLights, StorageBLockBindings.spotLight);
 			
 		}
 		catch(Exception e)
