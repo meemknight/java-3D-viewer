@@ -90,7 +90,6 @@ public class SkyBoxRenderer
 	
 	public void render(Camera camera, SkyBox skyBox)
 	{
-		
 		shader.bind();
 		
 		GL30.glBindVertexArray(vao);

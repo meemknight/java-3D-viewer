@@ -1,5 +1,9 @@
+import org.joml.Matrix4f;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.GL43;
+import org.lwjgl.system.MemoryStack;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -7,15 +11,97 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
-import static org.lwjgl.opengl.GL30.glGenerateMipmap;
+import static org.lwjgl.opengl.GL30.*;
 
 public class TextureLoader
 {
+	private TextureLoader(){};
+	
+	public static Shader cubeMapConvoluteShader;
+	
+	private static int u_viewProjection;
+	private static int vertexArray;
+	private static int vertexBuffer;
+	
+	//todo refactor
+	private static float skyboxVertices[] = {
+			// positions
+			-1.0f,  1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			
+			-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+			
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			
+			-1.0f, -1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+			
+			-1.0f,  1.0f, -1.0f,
+			1.0f,  1.0f, -1.0f,
+			1.0f,  1.0f,  1.0f,
+			1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f, -1.0f,
+			
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			1.0f, -1.0f, -1.0f,
+			1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			1.0f, -1.0f,  1.0f
+	};
+	
+	public static void init()
+	{
+		cubeMapConvoluteShader = new Shader();
+		
+		try
+		{
+			cubeMapConvoluteShader.loadShaderFromFile("resources/cubeMapBasicShader.vert",
+				"resources/convolute.frag");
+		}catch(Exception e)
+		{
+			System.out.println("Error loading shader in thxture loader" + e);
+		}
+		
+		u_viewProjection = cubeMapConvoluteShader.getUniformLocation("u_viewProjection");
+	
+		vertexArray = glGenVertexArrays();
+		glBindVertexArray(vertexArray);
+		
+		vertexBuffer = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+		
+		glBufferData(GL_ARRAY_BUFFER, skyboxVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+		
+		glBindVertexArray(0);
+	}
 	
 	//https://www.youtube.com/watch?v=SPt-aogu72A&list=PLRIWtICgwaX0u7Rf9zkZhLoLuZVfUksDP&index=6
 	public static IntBuffer loadTexturePixelData(String name, Vector2i dimensions)
@@ -75,10 +161,10 @@ public class TextureLoader
 		glBindTexture(GL_TEXTURE_2D, 0);
 		return result;
 	}
-
+	
+	//refactor
 	public static int loadSkyBox(String names[])
 	{
-		
 		//todo check if names is of size 6.
 		
 		int id = GL30.glGenTextures();
@@ -101,6 +187,84 @@ public class TextureLoader
 		GL30.glTexParameteri(GL30.GL_TEXTURE_CUBE_MAP, GL30.GL_TEXTURE_WRAP_R, GL30.GL_CLAMP_TO_EDGE);
 		
 		return id;
+	}
+	
+	private final static Matrix4f captureProjection = new Matrix4f().perspective(GameMath.toRadians(90.0f),
+			1.0f, 0.1f, 10.0f);
+	
+	private static Matrix4f captureViews[] =
+		{
+				new Matrix4f().lookAt(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(1.0f,  0.0f,  0.0f), new Vector3f(0.0f, -1.0f,  0.0f)),
+				new Matrix4f().lookAt(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(-1.0f,  0.0f,  0.0f), new Vector3f(0.0f, -1.0f,  0.0f)),
+				new Matrix4f().lookAt(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f,  1.0f,  0.0f), new Vector3f(0.0f,  0.0f,  1.0f)),
+				new Matrix4f().lookAt(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f, -1.0f,  0.0f), new Vector3f(0.0f,  0.0f, -1.0f)),
+				new Matrix4f().lookAt(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f,  0.0f,  1.0f), new Vector3f(0.0f, -1.0f,  0.0f)),
+				new Matrix4f().lookAt(new Vector3f(0.0f, 0.0f, 0.0f), new Vector3f(0.0f,  0.0f, -1.0f), new Vector3f(0.0f, -1.0f,  0.0f))
+			};
+	
+	public static void generateSkyBoxConvoluteTexture(SkyBox skyBox)
+	{
+		final int quality = 32;
+		
+		int captureFBO = glGenFramebuffers();
+		glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+		
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.texture);
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+		
+		GL30.glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glEnable(GL43.GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		
+		int viewPort[] = new int[4];
+		glGetIntegerv(GL_VIEWPORT, viewPort);
+		
+		skyBox.diffuseIrradianceMap = glGenTextures();
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.diffuseIrradianceMap);
+		
+		for(int i=0; i<6; i++)
+		{
+			GL43.glTexImage2D(GL30.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL30.GL_RGB16F, quality, quality, 0,
+					GL30.GL_RGB, GL30.GL_FLOAT, 0);
+		}
+		
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		
+		cubeMapConvoluteShader.bind();
+		glBindVertexArray(vertexArray);
+		
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.texture);
+		glViewport(0, 0, quality, quality);
+		
+		for(int i=0;i < 6; i++)
+		{
+			try (MemoryStack stack = MemoryStack.stackPush()) {
+				
+				Matrix4f mat = new Matrix4f(captureProjection);
+				
+				FloatBuffer fb = (mat.mul(captureViews[i])).get(stack.mallocFloat(16));
+				
+				GL30.glUniformMatrix4fv(u_viewProjection, false,
+						fb);
+			}
+
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+					GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skyBox.diffuseIrradianceMap, 0);
+			
+			glClear(GL_COLOR_BUFFER_BIT);
+			
+			glDrawArrays(GL_TRIANGLES, 0, 6 * 6); // renders a 1x1 cube //todo refactor to draw only a face
+		}
+		
+		glViewport(viewPort[0], viewPort[1], viewPort[2], viewPort[3]);
+		glBindVertexArray(0);
+		glDisable(GL43.GL_TEXTURE_CUBE_MAP_SEAMLESS);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDeleteFramebuffers(captureFBO);
 	}
 	
 

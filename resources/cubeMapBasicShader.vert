@@ -1,0 +1,15 @@
+#version 330
+#pragma debug(on)
+//https://learnopengl.com/PBR/IBL/Diffuse-irradiance
+
+layout (location = 0) in vec3 aPos;
+
+out vec3 v_localPos;
+
+uniform mat4 u_viewProjection;
+
+void main()
+{
+	v_localPos = aPos;
+	gl_Position = u_viewProjection * vec4(aPos, 1.0);
+}  

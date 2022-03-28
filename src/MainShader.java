@@ -3,15 +3,15 @@ import org.lwjgl.opengl.GL43;
 public class MainShader extends Shader
 {
 	
-	int u_viewProjection;
-	int u_pointLightsCount;
-	int u_directionalLightsCount;
-	int u_spotLightsCount;
-	int u_pointLights;
-	int u_directionalLights;
-	int u_spotLights;
-	int u_model;
-	int u_eye;
+	public int u_viewProjection;
+	public int u_pointLightsCount;
+	public int u_directionalLightsCount;
+	public int u_spotLightsCount;
+	public int u_pointLights;
+	public int u_directionalLights;
+	public int u_spotLights;
+	public int u_model;
+	public int u_eye;
 	
 	public void init()
 	{

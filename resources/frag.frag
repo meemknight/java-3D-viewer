@@ -10,6 +10,7 @@ layout(binding = 1) uniform sampler2D u_normal;
 layout(binding = 2) uniform sampler2D u_ao;
 layout(binding = 3) uniform sampler2D u_metallic;
 layout(binding = 4) uniform sampler2D u_roughness;
+layout(binding = 5) uniform samplerCube u_diffuseIrradianceMap;
 
 uniform vec3 u_eye;
 
@@ -316,7 +317,13 @@ void main()
 
     vec3 light = vec3(0);
 
-    light += vec3(0.1) * ao; //ambient light
+    //light += vec3(0.1) * ao; //ambient light
+    vec3 diffuseIrradiance = texture(u_diffuseIrradianceMap, normalMappedNormal).rgb;
+    vec3 F  = fresnelSchlick(max(dot(normalMappedNormal, viewDir), 0.0), vec3(0.04));
+    vec3 kD = (vec3(1.0) - F) * (1.0 - metallic);
+
+    vec3 ambient = kD * color.rgb * ao;
+    light += ambient;
 
     for(int i=0; i< u_pointLightsCount; i++)
     {

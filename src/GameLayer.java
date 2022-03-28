@@ -43,6 +43,8 @@ public class GameLayer extends GameManager
 	{
 		//GL43.glEnable(GL_CULL_FACE);
 		
+		TextureLoader.init();
+		
 		lightManager.init();
 		shader.init();
 		gyzmosRenderer.init();
@@ -74,6 +76,7 @@ public class GameLayer extends GameManager
 					"resources/skyBoxes/ocean/back.jpg" };
 		
 		skyBox.texture = TextureLoader.loadSkyBox(names);
+		TextureLoader.generateSkyBoxConvoluteTexture(skyBox);
 		
 		pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
 		pointLightArray.add(new PointLight(-4, 4, 1, 0, 0, 1));
@@ -306,6 +309,8 @@ public class GameLayer extends GameManager
 		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.metallicTexture.id);
 		GL30.glActiveTexture(GL30.GL_TEXTURE4);
 		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.roughnessTexture.id);
+		GL30.glActiveTexture(GL30.GL_TEXTURE5);
+		GL30.glBindTexture(GL30.GL_TEXTURE_CUBE_MAP, skyBox.diffuseIrradianceMap);
 		
 		GL30.glDrawElements(GL30.GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		
@@ -338,10 +343,21 @@ public class GameLayer extends GameManager
 		
 		gyzmosRenderer.flush(camera);
 		
+		if(isKeyReleased(GLFW_KEY_P)){toggle = !toggle;}
 		
-		skyBoxRenderer.render(camera, skyBox);
+		if(toggle)
+		{
+			skyBoxRenderer.render(camera, skyBox);
+		}else
+		{
+			box2.texture = skyBox.diffuseIrradianceMap;
+			skyBoxRenderer.render(camera, box2);
+		}
 		
 	}
+
+	static boolean toggle = true;
+	static SkyBox box2 = new SkyBox();
 	
 	public void gameClose()
 	{
