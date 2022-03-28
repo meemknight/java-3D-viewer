@@ -318,24 +318,40 @@ void main()
     color = toLinearSpace(texture2D(u_texture, v_uv).rgba);
 
     vec3 light = vec3(0);
+    vec3 F0 = vec3(0.04);
 
     {
-        float NdotV = max(dot(normalMappedNormal, -viewDir), 0.0);
+        vec3 N = normalMappedNormal;
+        vec3 V = viewDir;
+        vec3 R = normalize(reflect(-V, N)); //reflected vector
 
-        vec3 diffuseIrradiance = texture(u_diffuseIrradianceMap, normalMappedNormal).rgb;
-        vec3 F  = fresnelSchlick(NdotV, vec3(0.04));
-        vec3 kD = (vec3(1.0) - F) * (1.0 - metallic);
+        float dotNVClamped = clamp(dot(N, V), 0.0, 0.99);
+        vec3 F = fresnelSchlickRoughness(dotNVClamped, F0, roughness);
 
-        vec3 diffuse = kD * color.rgb;
+        vec3 kS = F;
 
-        vec3 R = normalize(reflect(-viewDir, normalMappedNormal)); //reflected vector
+        vec3 irradiance = texture(u_diffuseIrradianceMap, N).rgb; //this color is coming directly at the object
 
         const float MAX_REFLECTION_LOD = 4.0;
-        vec3 prefilteredColor = textureLod(u_specularIrradianceMap, R,  roughness * MAX_REFLECTION_LOD).rgb;
-        vec2 envBRDF  = texture(u_BRDFlookupTexture, vec2(NdotV, roughness)).xy;
-        vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
+        vec3 radiance = textureLod(u_specularIrradianceMap, R, roughness * MAX_REFLECTION_LOD).rgb;
 
-        light += (diffuse + specular) * ao;
+        vec2 brdf  = texture(u_BRDFlookupTexture,  vec2(dotNVClamped, roughness)).xy;
+
+
+        //http://jcgt.org/published/0008/01/03/
+        // Multiple scattering version
+        vec3 FssEss = kS * brdf.x + brdf.y;
+        float Ess = brdf.x + brdf.y;
+        float Ems = 1-Ess;
+        vec3 Favg = F0 + (1-F0)/21;
+        vec3 Fms = FssEss*Favg/(1-(1-Ess)*Favg);
+        // Dielectrics
+        vec3 Edss = 1 - (FssEss + Fms * Ems);
+        vec3 kD = color.rgb * Edss;
+        // Multiple scattering version
+        vec3 ambient = FssEss * radiance + (Fms*Ems+kD) * irradiance;
+
+        light += ambient * ao;
 
     }
 
