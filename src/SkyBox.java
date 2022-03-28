@@ -5,6 +5,6 @@ public class SkyBox
 {
 	public int texture;
 	public int diffuseIrradianceMap;
-	
+	public int speculatIrradianceMap;
 	
 }

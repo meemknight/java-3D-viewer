@@ -30,6 +30,7 @@ public class GameLayer extends GameManager
 	Texture lightBulb = new Texture();
 	Texture spotLight = new Texture();
 	SkyBox skyBox = new SkyBox();
+	Texture brdfTexture = new Texture();
 	
 	ArrayList<PointLight> pointLightArray = new ArrayList<PointLight>();
 	ArrayList<DirectionalLight> directionalLightArray = new ArrayList<DirectionalLight>();
@@ -56,6 +57,8 @@ public class GameLayer extends GameManager
 			lightBulb.load("resources//light.png");
 			spotLight.load("resources//spotLight.png");
 			
+			brdfTexture.load("resources//BRDFintegrationMap.png");
+			
 			metalMaterial.albedoTexture = new Texture().load("resources//rusted_iron//albedo.png");
 			metalMaterial.normalTexture = new Texture().load("resources//rusted_iron//normal.png");
 			metalMaterial.aoTexture = new Texture().load("resources//rusted_iron//ao.png");
@@ -76,7 +79,7 @@ public class GameLayer extends GameManager
 					"resources/skyBoxes/ocean/back.jpg" };
 		
 		skyBox.texture = TextureLoader.loadSkyBox(names);
-		TextureLoader.generateSkyBoxConvoluteTexture(skyBox);
+		TextureLoader.generateSkyBoxConvoluteTextures(skyBox);
 		
 		pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
 		pointLightArray.add(new PointLight(-4, 4, 1, 0, 0, 1));
@@ -311,6 +314,10 @@ public class GameLayer extends GameManager
 		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.roughnessTexture.id);
 		GL30.glActiveTexture(GL30.GL_TEXTURE5);
 		GL30.glBindTexture(GL30.GL_TEXTURE_CUBE_MAP, skyBox.diffuseIrradianceMap);
+		GL30.glActiveTexture(GL30.GL_TEXTURE6);
+		GL30.glBindTexture(GL30.GL_TEXTURE_CUBE_MAP, skyBox.speculatIrradianceMap);
+		GL30.glActiveTexture(GL30.GL_TEXTURE7);
+		GL30.glBindTexture(GL30.GL_TEXTURE_2D, brdfTexture.id);
 		
 		GL30.glDrawElements(GL30.GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		
@@ -350,7 +357,7 @@ public class GameLayer extends GameManager
 			skyBoxRenderer.render(camera, skyBox);
 		}else
 		{
-			box2.texture = skyBox.diffuseIrradianceMap;
+			box2.texture = skyBox.speculatIrradianceMap;
 			skyBoxRenderer.render(camera, box2);
 		}
 		

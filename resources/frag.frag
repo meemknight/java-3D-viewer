@@ -11,6 +11,8 @@ layout(binding = 2) uniform sampler2D u_ao;
 layout(binding = 3) uniform sampler2D u_metallic;
 layout(binding = 4) uniform sampler2D u_roughness;
 layout(binding = 5) uniform samplerCube u_diffuseIrradianceMap;
+layout(binding = 6) uniform samplerCube u_specularIrradianceMap;
+layout(binding = 7) uniform sampler2D u_BRDFlookupTexture;
 
 uniform vec3 u_eye;
 
@@ -317,13 +319,27 @@ void main()
 
     vec3 light = vec3(0);
 
-    //light += vec3(0.1) * ao; //ambient light
-    vec3 diffuseIrradiance = texture(u_diffuseIrradianceMap, normalMappedNormal).rgb;
-    vec3 F  = fresnelSchlick(max(dot(normalMappedNormal, viewDir), 0.0), vec3(0.04));
-    vec3 kD = (vec3(1.0) - F) * (1.0 - metallic);
+    {
+        float NdotV = max(dot(normalMappedNormal, -viewDir), 0.0);
 
-    vec3 ambient = kD * color.rgb * ao;
-    light += ambient;
+        vec3 diffuseIrradiance = texture(u_diffuseIrradianceMap, normalMappedNormal).rgb;
+        vec3 F  = fresnelSchlick(NdotV, vec3(0.04));
+        vec3 kD = (vec3(1.0) - F) * (1.0 - metallic);
+
+        vec3 diffuse = kD * color.rgb;
+
+        vec3 R = normalize(reflect(-viewDir, normalMappedNormal)); //reflected vector
+
+        const float MAX_REFLECTION_LOD = 4.0;
+        vec3 prefilteredColor = textureLod(u_specularIrradianceMap, R,  roughness * MAX_REFLECTION_LOD).rgb;
+        vec2 envBRDF  = texture(u_BRDFlookupTexture, vec2(NdotV, roughness)).xy;
+        vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
+
+        light += (diffuse + specular) * ao;
+
+    }
+
+
 
     for(int i=0; i< u_pointLightsCount; i++)
     {
