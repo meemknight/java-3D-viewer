@@ -20,3 +20,4 @@ Actions:
 - Render a 3D model.
 - Load Textures and [sky boxes](https://en.wikipedia.org/wiki/Skybox_(video_games)). 
 - Create the [irradiance map](https://learnopengl.com/PBR/IBL/Diffuse-irradiance) and the [pre-filtered environment map](https://learnopengl.com/PBR/IBL/Specular-IBL) for sky boxes.
+- Render a preview of the position of the lights.
