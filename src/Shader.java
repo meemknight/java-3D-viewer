@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+//a shader is a small program on the gpu that tells the pipeline how to draw the triangles.
+//they are loaded from resources/*.vert, resources/*.frag .
 public class Shader
 {
 	
@@ -45,6 +47,7 @@ public class Shader
 	
 	private int loadShaderComponent(int type, String text)
 	{
+		//create shader compile it and check for compile errors
 		int id = GL30.glCreateShader(type);
 		GL30.glShaderSource(id, text);
 		GL30.glCompileShader(id);
@@ -67,14 +70,17 @@ public class Shader
 	
 	public void loadShaderFromMemory(String vertexShader, String fragmentShader)
 	{
+		//shaders are made from one or more files(in my case 2 files) that have to be loaded, compiled and eventually linked
 		int vs = loadShaderComponent(GL30.GL_VERTEX_SHADER, vertexShader);
 		int fs = loadShaderComponent(GL30.GL_FRAGMENT_SHADER, fragmentShader);
 		
 		id = GL30.glCreateProgram();
 		
+		//add the 2 compiled shaders
 		GL30.glAttachShader(id, vs);
 		GL30.glAttachShader(id, fs);
 		
+		//link the shader program and then check for linking errors
 		GL30.glLinkProgram(id);
 		
 		if(GL30.glGetProgrami(id, GL30.GL_LINK_STATUS) == 0)

@@ -17,28 +17,23 @@ import java.util.List;
 
 public class GameLayer extends GameManager
 {
-	float pos = 0;
-	int vertexBuffer = 0;
-	int indexBuffer = 0;
-	MainShader shader = new MainShader();
+	
+	Entity entity = new Entity();
+	
 	Camera camera = new Camera();
 	GyzmosRenderer gyzmosRenderer = new GyzmosRenderer();
-	SkyBoxRenderer skyBoxRenderer = new SkyBoxRenderer();
+	Renderer renderer = new Renderer();
 	
-	int vao;
 	Texture t = new Texture();
 	Texture lightBulb = new Texture();
 	Texture spotLight = new Texture();
 	SkyBox skyBox = new SkyBox();
-	Texture brdfTexture = new Texture();
 	
 	ArrayList<PointLight> pointLightArray = new ArrayList<PointLight>();
 	ArrayList<DirectionalLight> directionalLightArray = new ArrayList<DirectionalLight>();
 	ArrayList<SpotLight> spotLightArray = new ArrayList<SpotLight>();
-	LightManager lightManager = new LightManager();
 	
 	Material metalMaterial = new Material();
-	
 	
 	public void gameInit()
 	{
@@ -46,18 +41,14 @@ public class GameLayer extends GameManager
 		
 		TextureLoader.init();
 		
-		lightManager.init();
-		shader.init();
 		gyzmosRenderer.init();
-		skyBoxRenderer.init();
+		renderer.init();
 		
 		try
 		{
 			t.load("resources//dog.png");
 			lightBulb.load("resources//light.png");
 			spotLight.load("resources//spotLight.png");
-			
-			brdfTexture.load("resources//BRDFintegrationMap.png");
 			
 			metalMaterial.albedoTexture = new Texture().load("resources//rusted_iron//albedo.png");
 			metalMaterial.normalTexture = new Texture().load("resources//rusted_iron//normal.png");
@@ -89,10 +80,6 @@ public class GameLayer extends GameManager
 		spotLightArray.add(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
 				GameMath.toRadians(15.f)));
 		
-		shader.bind();
-		
-		vao = GL30.glGenVertexArrays();
-		GL30.glBindVertexArray(vao);
 
 		float cubePositionsNormals[] = {
 				-1.0f, +1.0f, +1.0f, // 0
@@ -201,22 +188,12 @@ public class GameLayer extends GameManager
 			20, 22, 21, 20, 23, 22, // Bottom
 		};
 		
-		vertexBuffer = GL30.glGenBuffers();
-		GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vertexBuffer);
-		GL30.glBufferData(GL30.GL_ARRAY_BUFFER, cubePositionsNormals, GL30.GL_STATIC_DRAW);
 		
-		GL30.glEnableVertexAttribArray(0);
-		GL30.glVertexAttribPointer(0, 3, GL13.GL_FLOAT, false, 4*8, 0);
-		GL30.glEnableVertexAttribArray(1);
-		GL30.glVertexAttribPointer(1, 3, GL13.GL_FLOAT, false, 4*8, 4*3);
-		GL30.glEnableVertexAttribArray(2);
-		GL30.glVertexAttribPointer(2, 2, GL13.GL_FLOAT, false, 4*8, 4*6);
+		Model model = new Model();
+		model.loadFromComputedData(cubePositionsNormals, cubeIndices);
+		model.material = metalMaterial;
 		
-		indexBuffer = GL30.glGenBuffers();
-		GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-		GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, cubeIndices, GL30.GL_STATIC_DRAW);
-		
-		GL30.glBindVertexArray(0);
+		entity.models.add(model);
 		
 	}
 	
@@ -280,48 +257,9 @@ public class GameLayer extends GameManager
 			
 		}
 		
-		GL30.glBindVertexArray(vao);
 		
-		shader.bind();
+		renderer.renderEntity(entity, camera, skyBox, pointLightArray, directionalLightArray, spotLightArray);
 		
-		GL30.glUniform3f(shader.u_eye, camera.position.x, camera.position.y,camera.position.z);
-		
-		lightManager.sendDataToGpu(pointLightArray, directionalLightArray, spotLightArray,
-				shader.u_pointLightsCount, shader.u_directionalLightsCount, shader.u_spotLightsCount);
-		
-		try (MemoryStack stack = MemoryStack.stackPush()) {
-			
-			FloatBuffer fb = camera.getViewProjectionMatrix().get(stack.mallocFloat(16));
-			GL30.glUniformMatrix4fv(shader.u_viewProjection, false,
-					fb);
-			
-			//this will be model matrix
-			fb = new Matrix4f().identity().get(stack.mallocFloat(16));
-			GL30.glUniformMatrix4fv(shader.u_model, false,
-					fb);
-
-		}
-		
-		GL30.glActiveTexture(GL30.GL_TEXTURE0);
-		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.albedoTexture.id);
-		GL30.glActiveTexture(GL30.GL_TEXTURE1);
-		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.normalTexture.id);
-		GL30.glActiveTexture(GL30.GL_TEXTURE2);
-		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.aoTexture.id);
-		GL30.glActiveTexture(GL30.GL_TEXTURE3);
-		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.metallicTexture.id);
-		GL30.glActiveTexture(GL30.GL_TEXTURE4);
-		GL30.glBindTexture(GL_TEXTURE_2D, metalMaterial.roughnessTexture.id);
-		GL30.glActiveTexture(GL30.GL_TEXTURE5);
-		GL30.glBindTexture(GL30.GL_TEXTURE_CUBE_MAP, skyBox.diffuseIrradianceMap);
-		GL30.glActiveTexture(GL30.GL_TEXTURE6);
-		GL30.glBindTexture(GL30.GL_TEXTURE_CUBE_MAP, skyBox.speculatIrradianceMap);
-		GL30.glActiveTexture(GL30.GL_TEXTURE7);
-		GL30.glBindTexture(GL30.GL_TEXTURE_2D, brdfTexture.id);
-		
-		GL30.glDrawElements(GL30.GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-		
-		GL30.glBindVertexArray(0);
 		
 		for(var l : pointLightArray)
 		{
@@ -354,11 +292,11 @@ public class GameLayer extends GameManager
 		
 		if(toggle)
 		{
-			skyBoxRenderer.render(camera, skyBox);
+			renderer.renderSkyBox(camera, skyBox);
 		}else
 		{
 			box2.texture = skyBox.speculatIrradianceMap;
-			skyBoxRenderer.render(camera, box2);
+			renderer.renderSkyBox(camera, box2);
 		}
 		
 	}

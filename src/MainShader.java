@@ -1,8 +1,10 @@
 import org.lwjgl.opengl.GL43;
 
+//this is the main shader used to render objects
 public class MainShader extends Shader
 {
 	
+	//this are used to send data to the shader while drawing
 	public int u_viewProjection;
 	public int u_pointLightsCount;
 	public int u_directionalLightsCount;

@@ -7,21 +7,30 @@ import java.util.Vector;
 
 import org.joml.*;
 
+//used to move in 3D space
 public class Camera
 {
 	
 	public Vector3f position = new Vector3f(0,0,5.f);
+	
+	//up direction of the camera
 	public Vector3f up = new Vector3f(0,1,0);
 	
+	//the closest point that you can see
 	public float closePlane = 0.01f;
+	
+	//view distance
 	public float farPlane  = 100.f;
 	
+	//window's aspect ratio
 	public float aspectRatio = 1.f;
+	
+	//field of view expressed in radians
 	public float fovRadians = GameMath.toRadians(60.f);
 	
+	//the rotation of the camera
 	float viewAngleX = 0.f;
 	float viewAngleY = 0.f;
-	//public Vector3f viewDirection = new Vector3f(0,0,-1.f);
 	public Vector3f getViewDirection()
 	{
 		Vector3f viewDirection = new Vector3f(0,0,-1);
@@ -58,15 +67,7 @@ public class Camera
 	
 	public Matrix4f getViewProjectionMatrix()
 	{
-		//Matrix4f m = new Matrix4f()
-		//		.perspective((float) GameMath.toRadians(45.0f), 1.0f, 0.01f, 100.0f)
-		//		.lookAt(0.0f, 0.0f, 5.0f,
-		//				0.0f, 0.0f, 0.0f,
-		//				0.0f, 1.0f, 0.0f);
-		//return m;
-		//Matrix4f ret = new Matrix4f();
 		return getProjectionMatrix().mul(getViewMatrix());
-		//return ret;
 	}
 	
 	public void moveFPS(Vector3f dir)

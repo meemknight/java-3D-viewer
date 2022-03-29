@@ -5,6 +5,7 @@ import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
 
+//holds the shader and data for rendering a skybox.
 public class SkyBoxRenderer
 {
 	

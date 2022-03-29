@@ -18,13 +18,13 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 import static org.lwjgl.opengl.GL30.*;
 
+//this class loads textures and cube maps.
+// It also creates the IBL data necessary for the skyBox.
 public class TextureLoader
 {
 	private TextureLoader()
 	{
 	}
-	
-	;
 	
 	public static Shader cubeMapConvoluteShader;
 	public static Shader cubeMapSpecualrIBLShader;

@@ -12,7 +12,7 @@ import java.util.List;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
-
+//renders 2D textures used to mark where light sources are for debugging purposes but not only.
 public class GyzmosRenderer
 {
 	
@@ -42,6 +42,7 @@ public class GyzmosRenderer
 	FloatVector data = new FloatVector();
 	IntVector textureData = new IntVector();
 	
+	//rendering means adding the object in a que in this case.
 	public void render(float positionX, float positionY, float positionZ, Texture t, float colorR, float colorG, float colorB)
 	{
 		textureData.pushBack(t.id);
@@ -55,6 +56,7 @@ public class GyzmosRenderer
 		
 	}
 	
+	//the flush is the actual operation that renders the object. Rendering multiple objects separately can be highly inefficient.
 	public void flush(Camera camera)
 	{
 		GL43.glBindVertexArray(vao);
@@ -104,7 +106,6 @@ public class GyzmosRenderer
 			GL43.glDrawArrays(GL11.GL_TRIANGLE_FAN, 0, 4);
 			
 		}
-		
 		
 		GL43.glBindVertexArray(0);
 		

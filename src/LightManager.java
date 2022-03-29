@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL43;
 import java.util.List;
 
 //saves light data on the gpu
+//todo add laziness
 public class LightManager
 {
 	
