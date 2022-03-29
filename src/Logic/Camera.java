@@ -1,9 +1,6 @@
+package Logic;
 
-import org.lwjgl.ovr.OVRMatrix4f;
-
-import java.io.BufferedReader;
 import java.lang.Math;
-import java.util.Vector;
 
 import org.joml.*;
 

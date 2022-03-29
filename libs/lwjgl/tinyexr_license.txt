@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ///////////////////////////////////////////////////////////////////////////
 //
-// Copyright (c) 2002, Industrial Light & Magic, a division of Lucas
+// Copyright (c) 2002, Industrial Logic.Light & Magic, a division of Lucas
 // Digital Ltd. LLC
 //
 // All rights reserved.
@@ -42,7 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // copyright notice, this list of conditions and the following disclaimer
 // in the documentation and/or other materials provided with the
 // distribution.
-// *       Neither the name of Industrial Light & Magic nor the names of
+// *       Neither the name of Industrial Logic.Light & Magic nor the names of
 // its contributors may be used to endorse or promote products derived
 // from this software without specific prior written permission.
 //

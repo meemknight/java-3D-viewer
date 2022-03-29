@@ -1,4 +1,4 @@
-
+package Logic;
 
 
 public class PointLight extends Light

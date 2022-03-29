@@ -1,13 +1,11 @@
+package Logic;
+
 import org.joml.Matrix4f;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL43;
 
-import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
@@ -31,7 +29,7 @@ public class GyzmosRenderer
 			gyzmosShader.loadShaderFromFile("resources//gyzmos.vert", "resources//gyzmos.frag");
 		} catch(Exception e)
 		{
-			System.out.println("Shader loading err in Gyzmos renderer: " + e);
+			System.out.println("Logic.Shader loading err in Gyzmos renderer: " + e);
 		}
 		
 		u_modelViewProjection = gyzmosShader.getUniformLocation("u_modelViewProjection");

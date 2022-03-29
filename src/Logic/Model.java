@@ -1,3 +1,5 @@
+package Logic;
+
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 
@@ -19,7 +21,7 @@ public class Model
 	//how many vertices to draw
 	public int vertexCount = 0;
 	
-	void deleteData()
+	public void deleteData()
 	{
 		GL30.glDeleteBuffers(vertexBuffer);
 		GL30.glDeleteBuffers(indexBuffer);
@@ -28,7 +30,7 @@ public class Model
 	}
 	
 	//data represent positions, normals and uv's in this order
-	void loadFromComputedData(float data[], int indices[])
+	public void loadFromComputedData(float data[], int indices[])
 	{
 		assert(data.length % 8 == 0);
 		

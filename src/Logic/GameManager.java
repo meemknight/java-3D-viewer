@@ -1,10 +1,10 @@
-/////////////////////////////////////////////
+package Logic;/////////////////////////////////////////////
 //https://github.com/meemknight/javaGameSetup
 //(c) Luta Vlad
 //do not remove this notice
 /////////////////////////////////////////////
 
-import org.lwjgl.*;
+import Platform.GameLayer;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 
@@ -259,7 +259,7 @@ public abstract class GameManager
 					System.out.print("Source: Window System");
 					break;
 				case GL_DEBUG_SOURCE_SHADER_COMPILER:
-					System.out.print("Source: Shader Compiler");
+					System.out.print("Source: Logic.Shader Compiler");
 					break;
 				case GL_DEBUG_SOURCE_THIRD_PARTY:
 					System.out.print("Source: Third Party");

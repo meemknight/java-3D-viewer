@@ -1,3 +1,4 @@
+package Logic;
 
 import static org.lwjgl.opengl.GL30.*;
 

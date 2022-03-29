@@ -1,3 +1,5 @@
+package Logic;
+
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.opengl.GL43;
 

@@ -1,3 +1,5 @@
+package Logic;
+
 import org.joml.*;
 
 //this reprezents the position in 3D space of the object

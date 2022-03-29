@@ -1,3 +1,5 @@
+package Logic;
+
 import org.lwjgl.opengl.GL43;
 
 //this is the main shader used to render objects

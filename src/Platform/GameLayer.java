@@ -1,19 +1,13 @@
+package Platform;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.glEnd;
 
-import org.joml.Matrix4f;
+import Logic.*;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector3fc;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.MemoryStack;
 
-import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class GameLayer extends GameManager
 {
@@ -75,7 +69,7 @@ public class GameLayer extends GameManager
 		pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
 		pointLightArray.add(new PointLight(-4, 4, 1, 0, 0, 1));
 		
-		//directionalLightArray.add(new DirectionalLight(-1, -1, 0, 0.2f, 0.2f, 0.2f));
+		//directionalLightArray.add(new Logic.DirectionalLight(-1, -1, 0, 0.2f, 0.2f, 0.2f));
 		
 		spotLightArray.add(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
 				GameMath.toRadians(15.f)));
