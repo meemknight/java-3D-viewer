@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL11.*;
 import Platform.GameManager;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.opengl.GL30;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,6 @@ public class GameLayer extends GameManager
 	GyzmosRenderer gyzmosRenderer = new GyzmosRenderer();
 	Renderer renderer = new Renderer();
 	
-	Texture t = new Texture();
 	Texture lightBulb = new Texture();
 	Texture spotLight = new Texture();
 	SkyBox skyBox = new SkyBox();
@@ -31,7 +31,7 @@ public class GameLayer extends GameManager
 	
 	public void gameInit()
 	{
-		//GL43.glEnable(GL_CULL_FACE);
+		GL30.glEnable(GL_CULL_FACE);
 		
 		TextureLoader.init();
 		
@@ -40,7 +40,6 @@ public class GameLayer extends GameManager
 		
 		try
 		{
-			t.load("resources//dog.png");
 			lightBulb.load("resources//light.png");
 			spotLight.load("resources//spotLight.png");
 			
@@ -259,7 +258,7 @@ public class GameLayer extends GameManager
 		
 		renderer.renderEntity(entity, camera, skyBox, pointLightArray, directionalLightArray, spotLightArray);
 		
-		
+		//rotate lights around center
 		for(var l : pointLightArray)
 		{
 			float c = (float)Math.cos(3.1415926f * 0.5f * getDeltaTime());
