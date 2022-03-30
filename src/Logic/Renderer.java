@@ -34,18 +34,14 @@ public class Renderer
 	
 	}
 	
-	public void renderEntity(Entity e, Camera camera, SkyBox skyBox,
-							ArrayList<PointLight> pointLightArray,
-							ArrayList<DirectionalLight> directionalLightArray,
-							ArrayList<SpotLight> spotLightArray
-							)
+	public void renderEntity(Entity e, Camera camera, SkyBox skyBox)
 	{
 		
 		shader.bind();
 		
 		GL30.glUniform3f(shader.u_eye, camera.position.x, camera.position.y,camera.position.z);
 		
-		lightManager.sendDataToGpu(pointLightArray, directionalLightArray, spotLightArray,
+		lightManager.sendDataToGpu(
 				shader.u_pointLightsCount, shader.u_directionalLightsCount, shader.u_spotLightsCount);
 		
 		try (MemoryStack stack = MemoryStack.stackPush())

@@ -3,6 +3,7 @@ package Logic;
 import org.lwjgl.opengl.GL43;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 //saves light data on the gpu
@@ -14,6 +15,26 @@ public class LightManager
 	private int directionalLightBlockBuffer = 0;
 	private int spotLightBlockBuffer = 0;
 	
+	public ArrayList<PointLight> pointLights = new ArrayList<PointLight>();
+	public ArrayList<DirectionalLight> directionalLights = new ArrayList<DirectionalLight>();
+	public ArrayList<SpotLight> spotLights = new ArrayList<SpotLight>();
+	
+	public void addLight(Light l)
+	{
+		if(l == null)return;
+	
+		if(l instanceof PointLight)
+		{
+			pointLights.add((PointLight) l);
+		}else if(l instanceof  DirectionalLight)
+		{
+			directionalLights.add((DirectionalLight) l);
+		}else if(l instanceof  SpotLight)
+		{
+			spotLights.add((SpotLight) l);
+		}
+	}
+	
 	public void init()
 	{
 		pointLightBlockBuffer = GL43.glGenBuffers();
@@ -22,9 +43,7 @@ public class LightManager
 		
 	};
 
-	public void sendDataToGpu(List<PointLight> pointLights,
-							  List<DirectionalLight> directionalLights,
-							  List<SpotLight> spotLights,
+	public void sendDataToGpu(
 							  int u_pointLightsCount,
 							  int u_directionalLightsCount,
 							  int u_spotLightsCount

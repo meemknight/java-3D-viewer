@@ -24,3 +24,4 @@ Actions:
 - Load a 3D model.
 - Create the [irradiance map](https://learnopengl.com/PBR/IBL/Diffuse-irradiance) and the [pre-filtered environment map](https://learnopengl.com/PBR/IBL/Specular-IBL) for sky boxes.
 - Render a preview of the position of the lights.
+- Add lights to the scene.

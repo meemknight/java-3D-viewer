@@ -23,10 +23,6 @@ public class GameLayer extends GameManager
 	Texture spotLight = new Texture();
 	SkyBox skyBox = new SkyBox();
 	
-	ArrayList<PointLight> pointLightArray = new ArrayList<PointLight>();
-	ArrayList<DirectionalLight> directionalLightArray = new ArrayList<DirectionalLight>();
-	ArrayList<SpotLight> spotLightArray = new ArrayList<SpotLight>();
-	
 	Material metalMaterial = new Material();
 	
 	public void gameInit()
@@ -65,12 +61,13 @@ public class GameLayer extends GameManager
 		skyBox.texture = TextureLoader.loadSkyBox(names);
 		TextureLoader.generateSkyBoxConvoluteTextures(skyBox);
 		
-		pointLightArray.add(new PointLight(5, 1, 0, 1, 0, 0));
-		pointLightArray.add(new PointLight(-4, 4, 1, 0, 0, 1));
+		
+		renderer.lightManager.addLight(new PointLight(5, 1, 0, 1, 0, 0));
+		renderer.lightManager.addLight(new PointLight(-4, 4, 1, 0, 0, 1));
 		
 		//directionalLightArray.add(new Logic.DirectionalLight(-1, -1, 0, 0.2f, 0.2f, 0.2f));
 		
-		spotLightArray.add(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
+		renderer.lightManager.addLight(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
 				GameMath.toRadians(15.f)));
 		
 
@@ -256,10 +253,10 @@ public class GameLayer extends GameManager
 		}
 		
 		
-		renderer.renderEntity(entity, camera, skyBox, pointLightArray, directionalLightArray, spotLightArray);
+		renderer.renderEntity(entity, camera, skyBox);
 		
 		//rotate lights around center
-		for(var l : pointLightArray)
+		for(var l : renderer.lightManager.pointLights)
 		{
 			float c = (float)Math.cos(3.1415926f * 0.5f * getDeltaTime());
 			float s = (float)Math.sin(3.1415926f * 0.5f * getDeltaTime());
@@ -272,13 +269,13 @@ public class GameLayer extends GameManager
 		}
 		
 		
-		for(var i : pointLightArray)
+		for(var i : renderer.lightManager.pointLights)
 		{
 			gyzmosRenderer.render(i.positionX,i.positionY,i.positionZ, lightBulb,
 					i.colorR, i.colorG, i.colorB);
 		}
 		
-		for(var i : spotLightArray)
+		for(var i : renderer.lightManager.spotLights)
 		{
 			gyzmosRenderer.render(i.positionX,i.positionY,i.positionZ, spotLight,
 					i.colorR, i.colorG, i.colorB);
