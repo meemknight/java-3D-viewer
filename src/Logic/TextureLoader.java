@@ -146,13 +146,6 @@ public class TextureLoader
 			data[i] = a << 24 | b << 16 | g << 8 | r;
 		}
 		
-		int result = glGenTextures();
-		glBindTexture(GL_TEXTURE_2D, result);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-		
 		IntBuffer buffer = ByteBuffer.allocateDirect(data.length << 2)
 				.order(ByteOrder.nativeOrder()).asIntBuffer();
 		buffer.put(data).flip();
@@ -169,8 +162,8 @@ public class TextureLoader
 		glBindTexture(GL_TEXTURE_2D, result);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, dimensions.x, dimensions.y, 0, GL_RGBA,
 				GL_UNSIGNED_BYTE, buffer);
@@ -338,6 +331,9 @@ public class TextureLoader
 		}
 		
 		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.texture);
+		GL30.glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		
+		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.speculatIrradianceMap);
 		GL30.glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		
 		glViewport(viewPort[0], viewPort[1], viewPort[2], viewPort[3]);

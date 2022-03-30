@@ -322,8 +322,8 @@ void main()
 
     {
         vec3 N = normalMappedNormal;
-        vec3 V = viewDir;
-        vec3 R = normalize(reflect(-V, N)); //reflected vector
+        vec3 V = -viewDir;
+        vec3 R = normalize(reflect(V, N)); //reflected vector
 
         float dotNVClamped = clamp(dot(N, V), 0.0, 0.99);
         vec3 F = fresnelSchlickRoughness(dotNVClamped, F0, roughness);
@@ -354,7 +354,6 @@ void main()
         light += ambient * ao;
 
     }
-
 
 
     for(int i=0; i< u_pointLightsCount; i++)

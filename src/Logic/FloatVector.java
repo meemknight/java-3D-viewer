@@ -13,11 +13,11 @@ public class FloatVector
 		{
 			if(capacity <= 0)
 			{
-				resizeCapacity(10);
+				reserve(10);
 			}
 			else
 			{
-				resizeCapacity(capacity * 2);
+				reserve(capacity * 2);
 			}
 		}
 		
@@ -47,7 +47,7 @@ public class FloatVector
 		return data[i];
 	}
 	
-	void resizeCapacity(int newSize)
+	void reserve(int newSize)
 	{
 		float[] newData = new float[newSize];
 		

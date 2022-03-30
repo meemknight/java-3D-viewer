@@ -13,10 +13,10 @@ public class IntVector
 		{
 			if(capacity <= 0)
 			{
-				resizeCapacity(10);
+				reserve(10);
 			}else
 			{
-				resizeCapacity(capacity * 2);
+				reserve(capacity * 2);
 			}
 		}
 		
@@ -46,7 +46,7 @@ public class IntVector
 		return data[i];
 	}
 	
-	void resizeCapacity(int newSize)
+	void reserve(int newSize)
 	{
 		int[] newData = new int[newSize];
 		

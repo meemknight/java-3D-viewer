@@ -1,4 +1,4 @@
-import Platform.GameLayer;
+import Logic.GameLayer;
 
 public class Main
 {

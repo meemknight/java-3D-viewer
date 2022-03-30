@@ -18,5 +18,5 @@ void main()
 
     v_uv = uv;
     v_worldSpacePosition = vec3(u_model * vec4(pos, 1));
-    gl_Position = u_viewProjection * vec4(pos, 1);
+    gl_Position = u_viewProjection * vec4(v_worldSpacePosition, 1);
 }
