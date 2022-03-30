@@ -322,7 +322,7 @@ void main()
 
     {
         vec3 N = normalMappedNormal;
-        vec3 V = -viewDir;
+        vec3 V = -viewDir;                 //v is to the object
         vec3 R = normalize(reflect(V, N)); //reflected vector
 
         float dotNVClamped = clamp(dot(N, V), 0.0, 0.99);

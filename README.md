@@ -1,7 +1,7 @@
 # Java project, build on top of this [repo](https://github.com/meemknight/javaGameSetup), using [LWJGL](https://www.lwjgl.org).
 
 
-![](https://github.com/meemknight/photos/blob/master/java.png)
+![](https://github.com/meemknight/photos/blob/master/java.jpg)
 
 ---
 
