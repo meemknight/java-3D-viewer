@@ -10,7 +10,7 @@ Features:
 
 - All common types of lights (limited only by vram and performance).
 - [Normal Mapping](https://en.wikipedia.org/wiki/Normal_mapping).
-- [PBR](https://learnopengl.com/PBR/Theory) lighting model with [IBL](https://learnopengl.com/PBR/IBL/Diffuse-irradiance) and multiple scattering as described in [this](//http://jcgt.org/published/0008/01/03/) article.
+- [PBR](https://learnopengl.com/PBR/Theory) lighting model with [IBL](https://learnopengl.com/PBR/IBL/Diffuse-irradiance) and multiple scattering as described in [this](https://jcgt.org/published/0008/01/03/) article.
 - Gamma corrected and HDR [Filmic Tonemapping](//https://github.com/TheRealMJP/BakingLab/blob/master/BakingLab/ACES.hlsl).
 - Materials.
 
