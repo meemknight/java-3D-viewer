@@ -18,10 +18,13 @@ Features:
 
 Actions: 
 
-- Render a 3D model.
-- Load Textures and [sky boxes](https://en.wikipedia.org/wiki/Skybox_(video_games)). 
-- Load shader programs.
-- Load a 3D model.
-- Create the [irradiance map](https://learnopengl.com/PBR/IBL/Diffuse-irradiance) and the [pre-filtered environment map](https://learnopengl.com/PBR/IBL/Specular-IBL) for sky boxes.
-- Render a preview of the position of the lights.
-- Add lights to the scene.
+- Render a 3D model. (Renderer class)
+- Render the sky box. (SkyBoxRenderer class)
+- Load Textures and [sky boxes](https://en.wikipedia.org/wiki/Skybox_(video_games)). (TextureLoader class) 
+- Load shader programs. (Shader class)
+- Load a 3D model. (ModelLoader class)
+- Create the [irradiance map](https://learnopengl.com/PBR/IBL/Diffuse-irradiance) and the [pre-filtered environment map](https://learnopengl.com/PBR/IBL/Specular-IBL) for sky boxes. (TextureLoader class generateSkyBoxConvoluteTextures method)
+- Render a preview of the position of the lights. (GyzmosRenderer class)
+- Add lights to the scene. (LightManager class)
+- Remove lights from the scene. (LightManager class)
+- Update existing lights. (LightManager class)

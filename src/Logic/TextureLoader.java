@@ -15,6 +15,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
@@ -153,8 +155,17 @@ public class TextureLoader
 		return buffer;
 	}
 	
+	
+	private static HashMap<String, Integer> loadedTextures = new HashMap<>();
+	
 	public static int load(String name)
 	{
+		Integer found = loadedTextures.get(name);
+		if(found != null)
+		{
+			return found;
+		}
+		
 		Vector2i dimensions = new Vector2i();
 		IntBuffer buffer = loadTexturePixelData(name, dimensions);
 		
@@ -170,6 +181,9 @@ public class TextureLoader
 		glGenerateMipmap(GL_TEXTURE_2D);
 		
 		glBindTexture(GL_TEXTURE_2D, 0);
+		
+		loadedTextures.put(name, result);
+		
 		return result;
 	}
 	

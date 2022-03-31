@@ -10,8 +10,8 @@ import java.nio.FloatBuffer;
 //holds the shader and data for rendering a skybox.
 public class SkyBoxRenderer
 {
-	
-	private static float skyboxVertices[] = {
+	//a unit cube shape used to draw the sky
+	private static final float skyboxVertices[] = {
 			// positions
 			-1.0f,  1.0f, -1.0f,
 			-1.0f, -1.0f, -1.0f,
@@ -56,12 +56,13 @@ public class SkyBoxRenderer
 			1.0f, -1.0f,  1.0f
 	};
 	
-	public int vertexData = 0;
-	public int vao = 0;
+	private int vertexData = 0;
+	private int vao = 0;
 	
-	public Shader shader;
-	public int u_viewProjection;
+	private Shader shader;
+	private int u_viewProjection;
 	
+	//load the data necessary for rendering the sky box into the gpu
 	public void init()
 	{
 		vao = GL30.glGenVertexArrays();
@@ -95,12 +96,12 @@ public class SkyBoxRenderer
 	{
 		shader.bind();
 		
+		//use the sky box data
 		GL30.glBindVertexArray(vao);
-		GL30.glDisableVertexAttribArray(1);
-		GL30.glDisableVertexAttribArray(2);
 		
 		try (MemoryStack stack = MemoryStack.stackPush()) {
 			
+			//keep only the rotation of the camera not the movement to keep the sky box in the middle of the world
 			Matrix4f viewMat = camera.getViewMatrix();
 			viewMat.m03(0);
 			viewMat.m13(0);
@@ -117,8 +118,7 @@ public class SkyBoxRenderer
 					fb);
 		}
 		
-		//GL30.glDisable(GL30.GL_DEPTH_TEST);
-		//GL30.glDepthMask(false);
+		//draw the sky box
 		GL30.glDepthFunc(GL30.GL_LEQUAL);
 		GL30.glActiveTexture(GL30.GL_TEXTURE0);
 		GL30.glBindTexture(GL30.GL_TEXTURE_CUBE_MAP, skyBox.texture);
@@ -126,8 +126,6 @@ public class SkyBoxRenderer
 		
 		GL30.glDepthFunc(GL30.GL_LESS);
 		GL30.glBindVertexArray(0);
-		//GL30.glDepthMask(true);
-		//GL30.glEnable(GL30.GL_DEPTH_TEST);
 	}
 
 }
