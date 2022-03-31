@@ -134,7 +134,9 @@ public class TextureLoader
 			image.getRGB(0, 0, dimensions.x, dimensions.y, pixels, 0, dimensions.x);
 		} catch(IOException e)
 		{
-			e.printStackTrace();
+			System.out.println("Couldn't load:" + name);
+			return null;
+			//e.printStackTrace();
 		}
 		
 		int[] data = new int[dimensions.x * dimensions.y];
@@ -169,6 +171,8 @@ public class TextureLoader
 		Vector2i dimensions = new Vector2i();
 		IntBuffer buffer = loadTexturePixelData(name, dimensions);
 		
+		if(buffer == null){return 0;}
+		
 		int result = glGenTextures();
 		glBindTexture(GL_TEXTURE_2D, result);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -190,7 +194,7 @@ public class TextureLoader
 	//refactor
 	public static int loadSkyBox(String names[])
 	{
-		//todo check if names is of size 6.
+		if(names.length != 6){return 0;}
 		
 		int id = GL30.glGenTextures();
 		GL30.glBindTexture(GL30.GL_TEXTURE_CUBE_MAP, id);
@@ -199,6 +203,13 @@ public class TextureLoader
 		{
 			Vector2i dimensions = new Vector2i();
 			IntBuffer buffer = loadTexturePixelData(names[i], dimensions);
+			
+			if(buffer == null)
+			{
+				glDeleteTextures(id);
+				return 0;
+			}
+			
 			
 			GL30.glTexImage2D(
 					GL30.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,

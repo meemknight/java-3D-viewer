@@ -42,6 +42,8 @@ public class ModelLoader
 		
 		PointerBuffer buffer = scene.mMeshes();
 		
+		if(buffer.limit() == 0){return null;}
+		
 		for(int i=0; i<buffer.limit(); i++)
 		{
 			AIMesh mesh = AIMesh.create(buffer.get(i));
@@ -98,6 +100,7 @@ public class ModelLoader
 			model.material = material;
 			
 			e.models.add(model);
+			
 		}
 		
 		return e;
