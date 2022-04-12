@@ -350,10 +350,13 @@ public class TextureLoader
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
 						GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, skyBox.speculatIrradianceMap, mip);
 				glClear(GL_COLOR_BUFFER_BIT);
-				
+						String a = "";
+						a.length();
 				glDrawArrays(GL_TRIANGLES, 0, 6 * 6); // renders a 1x1 cube
 			}
 		}
+		
+		
 		
 		glBindTexture(GL_TEXTURE_CUBE_MAP, skyBox.texture);
 		GL30.glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
