@@ -26,8 +26,12 @@ public class Camera
 	public float fovRadians = GameMath.toRadians(60.f);
 	
 	//the rotation of the camera
-	float viewAngleX = 0.f;
-	float viewAngleY = 0.f;
+	//yaw, azimuth
+	public float viewAngleX = 0.f;
+	
+	//pitch, (zenith + 90 degrees)
+	public float viewAngleY = 0.f;
+	
 	public Vector3f getViewDirection()
 	{
 		Vector3f viewDirection = new Vector3f(0,0,-1);
