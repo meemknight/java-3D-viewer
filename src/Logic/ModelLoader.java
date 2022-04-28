@@ -2,10 +2,13 @@ package Logic;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
+import org.lwjgl.opencl.EXTFloatAtomics;
 
 import java.io.File;
-import java.nio.FloatBuffer;
+import java.lang.reflect.Array;
 import java.nio.IntBuffer;
+import java.util.Arrays;
+import java.util.stream.*;
 
 public class ModelLoader
 {
@@ -69,7 +72,6 @@ public class ModelLoader
 				computedData.pushBack(normal.z());
 				computedData.pushBack(uv.x());
 				computedData.pushBack(uv.y());
-				
 			}
 			
 			//todo reserve

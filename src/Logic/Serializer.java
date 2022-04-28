@@ -133,6 +133,8 @@ public class Serializer
 			}
 			else if(clazz == SpotLight.class)
 			{
+				f.write("directionX,directionY,directionZ,positionX,positionY,positionZ,angleCos,colorX,colorY,colorZ\n");
+				
 				for(var i : list)
 				{
 					
@@ -154,6 +156,8 @@ public class Serializer
 			}
 			else if(clazz == DirectionalLight.class)
 			{
+				f.write("directionX,directionY,directionZ,colorX,colorY,colorZ\n");
+				
 				for(var i : list)
 				{
 					DirectionalLight e = (DirectionalLight) i;
@@ -170,6 +174,8 @@ public class Serializer
 			}
 			else if(clazz == Sampler.class)
 			{
+				f.write("textureName,minSampler,maxSampler\n");
+				
 				for(var i : list)
 				{
 					Sampler e = (Sampler) i;
@@ -184,7 +190,6 @@ public class Serializer
 			{
 				throw new Exception("Unhandled type");
 			}
-			
 			
 		} catch(Exception e)
 		{

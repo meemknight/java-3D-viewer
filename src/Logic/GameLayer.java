@@ -10,6 +10,7 @@ import org.lwjgl.opengl.GL30;
 
 import java.awt.*;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class GameLayer extends GameManager
 {
@@ -260,7 +261,7 @@ public class GameLayer extends GameManager
 		renderer.renderEntity(entity, camera, skyBox);
 		
 		//rotate lights around center
-		for(var l : renderer.lightManager.pointLights)
+		renderer.lightManager.pointLights.stream().limit(2).forEach(l ->
 		{
 			float c = (float)Math.cos(3.1415926f * 0.5f * getDeltaTime());
 			float s = (float)Math.sin(3.1415926f * 0.5f * getDeltaTime());
@@ -270,8 +271,8 @@ public class GameLayer extends GameManager
 			
 			l.positionX = newX;
 			l.positionZ = newZ;
-		}
-		
+		});
+	
 		
 		for(var i : renderer.lightManager.pointLights)
 		{
