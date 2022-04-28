@@ -8,6 +8,9 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL30;
 
+import java.awt.*;
+import java.util.List;
+
 public class GameLayer extends GameManager
 {
 	
@@ -25,6 +28,9 @@ public class GameLayer extends GameManager
 	
 	public void gameInit()
 	{
+		List<PointLight> pl = Serializer.load("resources/pointLights.csv", PointLight.class);
+		Serializer.save(pl,"resources/pointLight2.csv", PointLight.class);
+		
 		GL30.glEnable(GL_CULL_FACE);
 		
 		TextureLoader.init();
