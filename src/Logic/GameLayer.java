@@ -9,6 +9,7 @@ import org.joml.Vector3f;
 import org.lwjgl.opengl.GL30;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -29,8 +30,6 @@ public class GameLayer extends GameManager
 	
 	public void gameInit()
 	{
-		List<PointLight> pl = Serializer.load("resources/pointLights.csv", PointLight.class);
-		Serializer.save(pl,"resources/pointLight2.csv", PointLight.class);
 		
 		GL30.glEnable(GL_CULL_FACE);
 		
@@ -66,14 +65,19 @@ public class GameLayer extends GameManager
 		skyBox.texture = TextureLoader.loadSkyBox(names);
 		TextureLoader.generateSkyBoxConvoluteTextures(skyBox);
 		
+		{
+			var pointLights = Serializer.load("resources/pointLights.csv", PointLight.class);
+			renderer.lightManager.pointLights = new ArrayList<>(pointLights);
+			
+			var directionalLights = Serializer.load("resources/directionalLights.csv", DirectionalLight.class);
+			renderer.lightManager.directionalLights = new ArrayList<>(directionalLights);
+			
+			var spotLights = Serializer.load("resources/spotLights.csv", SpotLight.class);
+			renderer.lightManager.spotLights = new ArrayList<>(spotLights);
+		}
 		
-		renderer.lightManager.addLight(new PointLight(5, 1, 0, 1, 0, 0));
-		renderer.lightManager.addLight(new PointLight(-4, 4, 1, 0, 0, 1));
-		
-		//directionalLightArray.add(new Logic.DirectionalLight(-1, -1, 0, 0.2f, 0.2f, 0.2f));
-		
-		renderer.lightManager.addLight(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
-				GameMath.toRadians(15.f)));
+		//renderer.lightManager.addLight(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
+		//		GameMath.toRadians(15.f)));
 		
 
 		float cubePositionsNormals[] = {
@@ -306,8 +310,9 @@ public class GameLayer extends GameManager
 	
 	public void gameClose()
 	{
-	
-	
+		Serializer.save(renderer.lightManager.pointLights, "resources/pointLights.csv", PointLight.class);
+		Serializer.save(renderer.lightManager.directionalLights, "resources/directionalLights.csv", DirectionalLight.class);
+		Serializer.save(renderer.lightManager.spotLights, "resources/spotLights.csv", SpotLight.class);
 	}
 	
 	
