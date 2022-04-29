@@ -1,2 +1,2 @@
-directionX,directionY,directionZ,positionX,positionY,positionZ,angleCos,colorR,colorG,colorB
--1, -1, 0, 3, 3, 0, 0.261799, 1, 1, 1
+directionX,directionY,directionZ,positionX,positionY,positionZ,angleCos,colorX,colorY,colorZ
+-0.7059135,-0.7059135,0.0,3.0,3.0,0.0,0.261799,1.0,1.0,1.0

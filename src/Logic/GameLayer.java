@@ -7,6 +7,7 @@ import platform.GameManager;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL30;
+import platform.Log;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -26,10 +27,15 @@ public class GameLayer extends GameManager
 	Texture spotLight = new Texture();
 	SkyBox skyBox = new SkyBox();
 	
+	List<Sampler> samplers = null;
+	
 	Material metalMaterial = new Material();
+	
+	Log log = new Log("resources/log.txt");
 	
 	public void gameInit()
 	{
+		log.writeLog("program start");
 		
 		GL30.glEnable(GL_CULL_FACE);
 		
@@ -75,6 +81,8 @@ public class GameLayer extends GameManager
 			var spotLights = Serializer.load("resources/spotLights.csv", SpotLight.class);
 			renderer.lightManager.spotLights = new ArrayList<>(spotLights);
 		}
+		
+		samplers = Serializer.load("resources/samplers.csv", Sampler.class);
 		
 		//renderer.lightManager.addLight(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
 		//		GameMath.toRadians(15.f)));
@@ -313,6 +321,7 @@ public class GameLayer extends GameManager
 		Serializer.save(renderer.lightManager.pointLights, "resources/pointLights.csv", PointLight.class);
 		Serializer.save(renderer.lightManager.directionalLights, "resources/directionalLights.csv", DirectionalLight.class);
 		Serializer.save(renderer.lightManager.spotLights, "resources/spotLights.csv", SpotLight.class);
+		Serializer.save(samplers, "resources/samplers.csv", Sampler.class);
 	}
 	
 	
