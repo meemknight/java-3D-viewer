@@ -7,6 +7,12 @@ import platform.GameManager;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL30;
+import platform.Log;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class GameLayer extends GameManager
 {
@@ -21,10 +27,16 @@ public class GameLayer extends GameManager
 	Texture spotLight = new Texture();
 	SkyBox skyBox = new SkyBox();
 	
+	List<Sampler> samplers = null;
+	
 	Material metalMaterial = new Material();
+	
+	Log log = new Log("resources/log.txt");
 	
 	public void gameInit()
 	{
+		log.writeLog("program start");
+		
 		GL30.glEnable(GL_CULL_FACE);
 		
 		TextureLoader.init();
@@ -42,6 +54,7 @@ public class GameLayer extends GameManager
 			metalMaterial.aoTexture = new Texture().load("resources//rusted_iron//ao.png");
 			metalMaterial.metallicTexture = new Texture().load("resources//rusted_iron//metallic.png");
 			metalMaterial.roughnessTexture = new Texture().load("resources//rusted_iron//roughness.png");
+			log.writeLog("loaded textures");
 			
 		}
 		catch(Exception e){
@@ -58,15 +71,25 @@ public class GameLayer extends GameManager
 		
 		skyBox.texture = TextureLoader.loadSkyBox(names);
 		TextureLoader.generateSkyBoxConvoluteTextures(skyBox);
+		log.writeLog("loaded skybox");
 		
+		{
+			var pointLights = Serializer.getInstance().load("resources/pointLights.csv", PointLight.class);
+			renderer.lightManager.pointLights = new ArrayList<>(pointLights);
+			
+			var directionalLights = Serializer.getInstance().load("resources/directionalLights.csv", DirectionalLight.class);
+			renderer.lightManager.directionalLights = new ArrayList<>(directionalLights);
+			
+			var spotLights = Serializer.getInstance().load("resources/spotLights.csv", SpotLight.class);
+			renderer.lightManager.spotLights = new ArrayList<>(spotLights);
+			
+			log.writeLog("loaded data from csv");
+		}
 		
-		renderer.lightManager.addLight(new PointLight(5, 1, 0, 1, 0, 0));
-		renderer.lightManager.addLight(new PointLight(-4, 4, 1, 0, 0, 1));
+		samplers = Serializer.getInstance().load("resources/samplers.csv", Sampler.class);
 		
-		//directionalLightArray.add(new Logic.DirectionalLight(-1, -1, 0, 0.2f, 0.2f, 0.2f));
-		
-		renderer.lightManager.addLight(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
-				GameMath.toRadians(15.f)));
+		//renderer.lightManager.addLight(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
+		//		GameMath.toRadians(15.f)));
 		
 
 		float cubePositionsNormals[] = {
@@ -254,7 +277,7 @@ public class GameLayer extends GameManager
 		renderer.renderEntity(entity, camera, skyBox);
 		
 		//rotate lights around center
-		for(var l : renderer.lightManager.pointLights)
+		renderer.lightManager.pointLights.stream().limit(2).forEach(l ->
 		{
 			float c = (float)Math.cos(3.1415926f * 0.5f * getDeltaTime());
 			float s = (float)Math.sin(3.1415926f * 0.5f * getDeltaTime());
@@ -264,8 +287,8 @@ public class GameLayer extends GameManager
 			
 			l.positionX = newX;
 			l.positionZ = newZ;
-		}
-		
+		});
+	
 		
 		for(var i : renderer.lightManager.pointLights)
 		{
@@ -299,8 +322,10 @@ public class GameLayer extends GameManager
 	
 	public void gameClose()
 	{
-	
-	
+		Serializer.getInstance().save(renderer.lightManager.pointLights, "resources/pointLights.csv", PointLight.class);
+		Serializer.getInstance().save(renderer.lightManager.directionalLights, "resources/directionalLights.csv", DirectionalLight.class);
+		Serializer.getInstance().save(renderer.lightManager.spotLights, "resources/spotLights.csv", SpotLight.class);
+		Serializer.getInstance().save(samplers, "resources/samplers.csv", Sampler.class);
 	}
 	
 	

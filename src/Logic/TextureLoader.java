@@ -225,7 +225,7 @@ public class TextureLoader
 		return id;
 	}
 	
-	private final static Matrix4f captureProjection = new Matrix4f().perspective(GameMath.toRadians(90.0f),
+	private final static Matrix4f captureProjection = new Matrix4f().perspective(GameMath.getInstance().toRadians(90.0f),
 			1.0f, 0.1f, 10.0f);
 	
 	private static Matrix4f captureViews[] =

@@ -2,13 +2,22 @@ package Logic;
 
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
+import org.lwjgl.opencl.EXTFloatAtomics;
 
 import java.io.File;
-import java.nio.FloatBuffer;
+import java.lang.reflect.Array;
 import java.nio.IntBuffer;
+import java.nio.charset.MalformedInputException;
+import java.util.Arrays;
+import java.util.stream.*;
 
 public class ModelLoader
 {
+	private ModelLoader(){};
+	
+	private static ModelLoader inst = new ModelLoader();
+	
+	public static ModelLoader getInstance(){return inst;}
 	
 	private static Texture getTextureFromMaterial(AIMaterial mat, int textureType, String objPath)
 	{
@@ -69,7 +78,6 @@ public class ModelLoader
 				computedData.pushBack(normal.z());
 				computedData.pushBack(uv.x());
 				computedData.pushBack(uv.y());
-				
 			}
 			
 			//todo reserve
