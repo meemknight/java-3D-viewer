@@ -1,0 +1,4 @@
+2022/05/11 19:18:52: program start
+2022/05/11 19:18:54: loaded textures
+2022/05/11 19:18:56: loaded skybox
+2022/05/11 19:18:56: loaded data from csv

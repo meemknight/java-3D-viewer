@@ -11,8 +11,11 @@ public class Serializer
 	private Serializer()
 	{
 	}
+	private static Serializer inst = new Serializer();
 	
-	public static <T> List<T> load(String file, Class<T> clazz)
+	public static Serializer getInstance(){return inst;}
+	
+	public <T> List<T> load(String file, Class<T> clazz)
 	{
 		try(BufferedReader fileBuffer = new BufferedReader(new FileReader(file)))
 		{
@@ -99,7 +102,7 @@ public class Serializer
 			return new ArrayList<T>();
 		} catch(Exception e)
 		{
-			System.out.println("Couldn't parse file " + file);
+			System.out.println("Couldn't parse file " + file + " " + e);
 			return new ArrayList<T>();
 		}
 		
@@ -107,7 +110,7 @@ public class Serializer
 	
 	;
 	
-	public static <T> void save(List<T> list, String file, Class<T> clazz)
+	public <T> void save(List<T> list, String file, Class<T> clazz)
 	{
 		try
 		{
@@ -193,7 +196,7 @@ public class Serializer
 			
 		} catch(Exception e)
 		{
-			System.out.println("Couldn't write file: " + file);
+			System.out.println("Couldn't write file: " + file + " " + e);
 		}
 		
 	}

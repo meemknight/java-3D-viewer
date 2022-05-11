@@ -29,7 +29,7 @@ public class DirectionalLight extends Light
 			directionZ = 0;
 		}else
 		{
-			float inverseSrt = GameMath.inverseSqrt(magnitude);
+			float inverseSrt = GameMath.getInstance().inverseSqrt(magnitude);
 			directionX *= inverseSrt;
 			directionY *= inverseSrt;
 			directionZ *= inverseSrt;

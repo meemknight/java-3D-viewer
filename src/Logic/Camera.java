@@ -23,7 +23,7 @@ public class Camera
 	public float aspectRatio = 1.f;
 	
 	//field of view expressed in radians
-	public float fovRadians = GameMath.toRadians(60.f);
+	public float fovRadians = GameMath.getInstance().toRadians(60.f);
 	
 	//the rotation of the camera
 	//yaw, azimuth
@@ -102,8 +102,8 @@ public class Camera
 		viewAngleX += delta.x * speed;
 		viewAngleY += delta.y * speed;
 		
-		viewAngleY = Math.max(viewAngleY, GameMath.toRadians(-89.f));
-		viewAngleY = Math.min(viewAngleY, GameMath.toRadians(89.f));
+		viewAngleY = Math.max(viewAngleY, GameMath.getInstance().toRadians(-89.f));
+		viewAngleY = Math.min(viewAngleY, GameMath.getInstance().toRadians(89.f));
 	}
 	
 	

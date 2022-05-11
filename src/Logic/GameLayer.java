@@ -54,6 +54,7 @@ public class GameLayer extends GameManager
 			metalMaterial.aoTexture = new Texture().load("resources//rusted_iron//ao.png");
 			metalMaterial.metallicTexture = new Texture().load("resources//rusted_iron//metallic.png");
 			metalMaterial.roughnessTexture = new Texture().load("resources//rusted_iron//roughness.png");
+			log.writeLog("loaded textures");
 			
 		}
 		catch(Exception e){
@@ -70,19 +71,22 @@ public class GameLayer extends GameManager
 		
 		skyBox.texture = TextureLoader.loadSkyBox(names);
 		TextureLoader.generateSkyBoxConvoluteTextures(skyBox);
+		log.writeLog("loaded skybox");
 		
 		{
-			var pointLights = Serializer.load("resources/pointLights.csv", PointLight.class);
+			var pointLights = Serializer.getInstance().load("resources/pointLights.csv", PointLight.class);
 			renderer.lightManager.pointLights = new ArrayList<>(pointLights);
 			
-			var directionalLights = Serializer.load("resources/directionalLights.csv", DirectionalLight.class);
+			var directionalLights = Serializer.getInstance().load("resources/directionalLights.csv", DirectionalLight.class);
 			renderer.lightManager.directionalLights = new ArrayList<>(directionalLights);
 			
-			var spotLights = Serializer.load("resources/spotLights.csv", SpotLight.class);
+			var spotLights = Serializer.getInstance().load("resources/spotLights.csv", SpotLight.class);
 			renderer.lightManager.spotLights = new ArrayList<>(spotLights);
+			
+			log.writeLog("loaded data from csv");
 		}
 		
-		samplers = Serializer.load("resources/samplers.csv", Sampler.class);
+		samplers = Serializer.getInstance().load("resources/samplers.csv", Sampler.class);
 		
 		//renderer.lightManager.addLight(new SpotLight(-1,-1,0, 3,3,0, 1,1,1,
 		//		GameMath.toRadians(15.f)));
@@ -318,10 +322,10 @@ public class GameLayer extends GameManager
 	
 	public void gameClose()
 	{
-		Serializer.save(renderer.lightManager.pointLights, "resources/pointLights.csv", PointLight.class);
-		Serializer.save(renderer.lightManager.directionalLights, "resources/directionalLights.csv", DirectionalLight.class);
-		Serializer.save(renderer.lightManager.spotLights, "resources/spotLights.csv", SpotLight.class);
-		Serializer.save(samplers, "resources/samplers.csv", Sampler.class);
+		Serializer.getInstance().save(renderer.lightManager.pointLights, "resources/pointLights.csv", PointLight.class);
+		Serializer.getInstance().save(renderer.lightManager.directionalLights, "resources/directionalLights.csv", DirectionalLight.class);
+		Serializer.getInstance().save(renderer.lightManager.spotLights, "resources/spotLights.csv", SpotLight.class);
+		Serializer.getInstance().save(samplers, "resources/samplers.csv", Sampler.class);
 	}
 	
 	

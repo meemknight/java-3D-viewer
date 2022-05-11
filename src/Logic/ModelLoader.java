@@ -7,11 +7,17 @@ import org.lwjgl.opencl.EXTFloatAtomics;
 import java.io.File;
 import java.lang.reflect.Array;
 import java.nio.IntBuffer;
+import java.nio.charset.MalformedInputException;
 import java.util.Arrays;
 import java.util.stream.*;
 
 public class ModelLoader
 {
+	private ModelLoader(){};
+	
+	private static ModelLoader inst = new ModelLoader();
+	
+	public static ModelLoader getInstance(){return inst;}
 	
 	private static Texture getTextureFromMaterial(AIMaterial mat, int textureType, String objPath)
 	{
